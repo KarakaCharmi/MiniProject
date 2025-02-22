@@ -1,0 +1,110 @@
+.group-card {
+  width: 400px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+.group-card:hover {
+  transform: translateY(-5px);
+}
+
+.group-header {
+  padding: 24px;
+  color: #1f2937;
+  height: 120px;
+
+  position: relative;
+  background-color: #dbeafe;
+  border-bottom-left-radius: 12px;
+
+  margin-bottom: 16px;
+}
+
+.group-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.group-description {
+  font-size: 0.9rem;
+  color: #4b5563;
+}
+
+.edit-icon {
+  position: absolute;
+  /* bottom: -0.2px; */
+  top: 95px;
+  left: 18px;
+  /* background:none; */
+  border-radius: 50%;
+  /* padding:5px 10px; */
+  /* padding: 3px; */
+  border: 6px solid #fff;
+
+  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); */
+}
+
+.group-body {
+  padding: 15px;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.status {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.settled {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.owed {
+  background: #dcfce7;
+  color: #065f46;
+}
+
+.category {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.category-label {
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.category-badge {
+  background: #fef3c7;
+  color: #b45309;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.members {
+  display: flex;
+  gap: 8px;
+}
+
+.member-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid white;
+}
