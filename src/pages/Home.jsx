@@ -38,7 +38,7 @@ const Home = () => {
                   placeholder="JohnDoe@gmail.com"
                   className="outline-none flex-grow "
                 />
-                <Link to="login">
+                <Link to="/login">
                   <Button>Get Started</Button>
                 </Link>
               </div>

@@ -1,51 +1,98 @@
-import { useState } from "react";
+import { useReducer, useState } from "react";
 import "./CreateGroup.css";
+import axios from "axios";
+import { useAuth } from "../contextapi/UserAuth";
+import { Navigate } from "react-router-dom";
+
+const API_URL = "http://localhost:5000";
+
+const initialState = {
+  groupName: "",
+  groupDescription: "",
+  members: [],
+  currency: "",
+  category: "",
+  createdBy: "", // Will be set dynamically
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case "SET_FIELD":
+      return { ...state, [action.field]: action.value };
+    case "ADD_MEMBER":
+      if (
+        action.email &&
+        !state.members.includes(action.email) &&
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(action.email)
+      ) {
+        return { ...state, members: [...state.members, action.email] };
+      }
+      return state;
+    case "REMOVE_MEMBER":
+      return {
+        ...state,
+        members: state.members.filter((email) => email !== action.email),
+      };
+    case "RESET":
+      return { ...initialState, createdBy: state.createdBy };
+    default:
+      return state;
+  }
+}
 
 export default function CreateGroup() {
-  const [formData, setFormData] = useState({
-    groupName: "",
-    groupDescription: "",
-    members: [],
-    currency: "",
-    category: "",
+  const { user } = useAuth(); // ✅ Move useAuth() inside the component
+  const [state, dispatch] = useReducer(reducer, {
+    ...initialState,
+    createdBy: user?.email || "", // Set createdBy dynamically
   });
-
   const [memberInput, setMemberInput] = useState("");
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
   const handleKeyDown = (e) => {
-    if (e.key === " " || e.key === "Enter") {
+    if (e.key === "Enter") {
       e.preventDefault();
-      addMember();
-    }
-  };
-
-  const addMember = () => {
-    const email = memberInput.trim().toLowerCase();
-
-    if (
-      email &&
-      !formData.members.includes(email) &&
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-    ) {
-      setFormData({ ...formData, members: [...formData.members, email] });
+      dispatch({ type: "ADD_MEMBER", email: memberInput.trim().toLowerCase() });
       setMemberInput("");
     }
   };
 
-  const handleRemoveMember = (emailToRemove) => {
-    const updatedMembers = formData.members.filter(
-      (email) => email !== emailToRemove
-    );
-    setFormData({ ...formData, members: updatedMembers });
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form Submitted:", formData);
+
+    // Extract values from state
+    const {
+      groupName,
+      groupDescription,
+      members,
+      currency,
+      category,
+      createdBy,
+    } = state;
+
+    // Ensure createdBy is not empty (if user is logged in)
+    if (!createdBy) {
+      console.error("Error: User is not authenticated.");
+      return;
+    }
+
+    const groupData = {
+      name: groupName, // ✅ Correctly mapped
+      description: groupDescription, // ✅ Correctly mapped
+      members,
+      currency,
+      category,
+      createdBy, // ✅ Use createdBy from state
+    };
+
+    try {
+      const response = await axios.post(`${API_URL}/groups`, groupData);
+      console.log("Group created successfully:", response.data);
+      // Redirect to Groups page
+      dispatch({ type: "RESET" });
+      setIsOption("Groups"); // Reset form fields
+    } catch (error) {
+      console.error("Error creating group:", error);
+    }
   };
 
   return (
@@ -56,27 +103,39 @@ export default function CreateGroup() {
           type="text"
           name="groupName"
           placeholder="Group Name"
-          value={formData.groupName}
-          onChange={handleChange}
+          value={state.groupName}
+          onChange={(e) =>
+            dispatch({
+              type: "SET_FIELD",
+              field: "groupName",
+              value: e.target.value,
+            })
+          }
           className="input-field"
           required
         />
         <textarea
           name="groupDescription"
           placeholder="Group Description"
-          value={formData.groupDescription}
-          onChange={handleChange}
+          value={state.groupDescription}
+          onChange={(e) =>
+            dispatch({
+              type: "SET_FIELD",
+              field: "groupDescription",
+              value: e.target.value,
+            })
+          }
           className="input-field"
           required
         />
         <div className="members-container">
           <div className="members-input-wrapper">
-            {formData.members.map((email, index) => (
+            {state.members.map((email, index) => (
               <span key={index} className="member-tag">
                 {email}
                 <button
                   type="button"
-                  onClick={() => handleRemoveMember(email)}
+                  onClick={() => dispatch({ type: "REMOVE_MEMBER", email })}
                   className="remove-member-btn"
                 >
                   ×
@@ -96,8 +155,14 @@ export default function CreateGroup() {
         <div className="currencycont">
           <select
             name="currency"
-            value={formData.currency}
-            onChange={handleChange}
+            value={state.currency}
+            onChange={(e) =>
+              dispatch({
+                type: "SET_FIELD",
+                field: "currency",
+                value: e.target.value,
+              })
+            }
             className="input-field"
             required
           >
@@ -108,8 +173,14 @@ export default function CreateGroup() {
           </select>
           <select
             name="category"
-            value={formData.category}
-            onChange={handleChange}
+            value={state.category}
+            onChange={(e) =>
+              dispatch({
+                type: "SET_FIELD",
+                field: "category",
+                value: e.target.value,
+              })
+            }
             className="input-field"
             required
           >

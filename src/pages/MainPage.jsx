@@ -1,68 +1,96 @@
-// import { useState } from "react";
+import { useEffect, useState } from "react";
+import { NavLink, Outlet } from "react-router-dom";
+import { useAuth } from "../contextapi/UserAuth";
+// import GroupCard from "./GroupCard";
+import axios from "axios";
 // import { Link } from "react-router-dom";
-import CreateGroup from "./CreateGroup";
-import { useState } from "react";
-import Dashboard from "./Dashboard";
-import Groups from "./Groups";
-import About from "./About";
-import { useNavigate } from "react-router-dom";
-export function Sidebar({ option, setIsOption }) {
-  const navigate = useNavigate();
+// import { useAuth } from "../contextapi/UserAuth";
+
+export function Sidebar() {
+  const { user, logout } = useAuth();
+
   return (
-    <div className="h-screen  bg-gray-300 p-5">
+    <div className="h-full p-5 bg-gray-300">
       <div className="mb-5">
         <div className="flex items-center space-x-3">
-          <div className="w-12 h-12 bg-orange-200/50 rounded-full"></div>
+          <img
+            src={`https://robohash.org/${user?.email}?set=set4`}
+            alt="Nature Avatar"
+            className="w-12 h-12 rounded"
+          />
+
           <div>
-            <h2 className="text-lg font-bold">Charmi Karaka</h2>
-            <p className="text-sm text-gray-700">karakacharmi@gmail.com</p>
+            <h2 className="text-lg font-bold">{user?.name || "User"}</h2>
+            <p className="text-sm text-gray-700">{user?.email || "No Email"}</p>
           </div>
         </div>
       </div>
+
       <nav>
         <ul className="space-y-3 font-mono">
           <li>
-            <a
-              className={`block p-2 rounded ${
-                option === "Dashboard" ? "bg-cyan-500 text-white" : ""
-              } hover:bg-cyan-500  hover:text-white`}
-              onClick={() => setIsOption("Dashboard")}
+            <NavLink
+              to="/explore/dashboard"
+              className={({ isActive }) =>
+                `block p-2 rounded ${
+                  isActive
+                    ? "bg-cyan-500 text-white font-bold"
+                    : "hover:bg-cyan-500 hover:text-white"
+                }`
+              }
             >
               Dashboard
-            </a>
+            </NavLink>
           </li>
           <li>
-            <a
-              className={`block p-2 rounded ${
-                option === "Groups" ? "bg-cyan-500 text-white" : ""
-              } hover:bg-cyan-500 hover:text-white`}
-              onClick={() => setIsOption("Groups")}
+            <NavLink
+              to="/explore/groups"
+              className={({ isActive }) =>
+                `block p-2 rounded ${
+                  isActive
+                    ? "bg-cyan-500 text-white font-bold"
+                    : "hover:bg-cyan-500 hover:text-white"
+                }`
+              }
             >
               Groups
-            </a>
+            </NavLink>
           </li>
           <li>
-            <a
-              className={`block p-2 rounded ${
-                option === "CreateGroup" ? "bg-cyan-500 text-white" : ""
-              } hover:bg-cyan-500  hover:text-white`}
-              onClick={() => setIsOption("CreateGroup")}
+            <NavLink
+              to="/explore/creategroup"
+              className={({ isActive }) =>
+                `block p-2 rounded ${
+                  isActive
+                    ? "bg-cyan-500 text-white font-bold"
+                    : "hover:bg-cyan-500 hover:text-white"
+                }`
+              }
             >
               Create Group
-            </a>
+            </NavLink>
           </li>
           <li>
-            <a
-              className={`block p-2 rounded ${
-                option === "About" ? "bg-cyan-500 text-white" : ""
-              } hover:bg-cyan-500  hover:text-white`}
-              onClick={() => {
-                setIsOption("About");
-                navigate("/");
-              }}
+            <NavLink
+              to="/about"
+              className={({ isActive }) =>
+                `block p-2 rounded ${
+                  isActive
+                    ? "bg-cyan-500 text-white font-bold"
+                    : "hover:bg-cyan-500 hover:text-white"
+                }`
+              }
             >
               About
-            </a>
+            </NavLink>
+          </li>
+          <li>
+            <button
+              onClick={logout}
+              className="mt-3 px-4 py-2 bg-red-500 text-white rounded-lg shadow-md"
+            >
+              Logout
+            </button>
           </li>
         </ul>
       </nav>
@@ -70,55 +98,41 @@ export function Sidebar({ option, setIsOption }) {
   );
 }
 
-// const CreateGroup = () => {
-//   return (
-//     <div className="p-10">
-//       <h2 className="text-2xl font-semibold mb-5">Create New Group</h2>
-//       <input
-//         type="text"
-//         placeholder="Group Name"
-//         className="w-full p-2 mb-3 border rounded"
-//       />
-//       <textarea
-//         placeholder="Group Description"
-//         className="w-full p-2 mb-3 border rounded"
-//       ></textarea>
-//       <input
-//         type="text"
-//         value="karakacharmi@gmail.com"
-//         readOnly
-//         className="w-full p-2 mb-3 border rounded bg-gray-200"
-//       />
-//       <div className="flex space-x-3">
-//         <select className="w-1/2 p-2 border rounded">
-//           <option>Currency</option>
-//         </select>
-//         <select className="w-1/2 p-2 border rounded">
-//           <option>Category</option>
-//         </select>
-//       </div>
-//       <button className="mt-5 bg-cyan-500 text-white px-4 py-2 rounded">
-//         Create Group
-//       </button>
-//     </div>
-//   );
-// };
+// export default Sidebar;
 
 const MainPage = () => {
-  const [option, setIsOption] = useState("CreateGroup");
+  // const [option, setIsOption] = useState("CreateGroup");
+  // Store created groups
+  const { user, groups, setGroups } = useAuth();
+
+  // Fetch groups from database when the component mounts
+  useEffect(() => {
+    const fetchGroups = async () => {
+      try {
+        const res = await axios.get("http://localhost:5000/groups");
+        setGroups(res.data); // Set state with fetched groups
+      } catch (error) {
+        console.error("Error fetching groups:", error);
+      }
+    };
+
+    fetchGroups();
+  }, []); // Runs only once when the component mounts
+
+  // Function to add a new group to state
+  const addGroup = (newGroup) => {
+    setGroups([...groups, newGroup]);
+  };
+
   return (
-    <div className="flex ">
-      <div className="w-1/4 fixed top-0 left-0">
-        <Sidebar option={option} setIsOption={setIsOption} />
+    <div className="flex">
+      <div className="w-[350px] fixed h-screen top-0 left-0">
+        <Sidebar />
       </div>
-      <div className="w-3/4 absolute top-[10%] right-0 ">
-        {option === "Dashboard" && <Dashboard />}
-        {option === "Groups" && <Groups />}
-        {/* {option === "About" && <About />} */}
-        {option === "CreateGroup" && <CreateGroup />}
+      <div className="flex-1 ml-[350px]  mt-10 right-0">
+        <Outlet />
       </div>
     </div>
   );
 };
-
 export default MainPage;

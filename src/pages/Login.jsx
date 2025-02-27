@@ -3,9 +3,11 @@ import Form from "./Form";
 import loginImage from "../images/Login-bro.png";
 import SignUpImage from "../images/Signup-rafiki.png";
 import Navbar from "../components/Navbar";
+import { useAuth } from "../contextapi/UserAuth";
 const Login = () => {
   const [isActive, setIsActive] = useState(false);
-
+  const [message, setMessage] = useState("");
+  const { setLoggedIn, user } = useAuth();
   return (
     <>
       <Navbar />
@@ -77,12 +79,6 @@ const Login = () => {
           >
             <h1 className="text-3xl mb-5">Sign Up</h1>
             <Form status={isActive} />
-            <button
-              className="w-full h-12 bg-blue-500 rounded-lg text-white font-semibold shadow-md"
-              onClick={() => setIsActive(!isActive)}
-            >
-              Sign Up
-            </button>
           </div>
 
           <div
@@ -92,12 +88,6 @@ const Login = () => {
           >
             <h1 className="text-3xl mb-5">Sign In</h1>
             <Form status={isActive} />
-            <button
-              className="w-full h-12 bg-blue-500 rounded-lg text-white font-semibold shadow-md"
-              onClick={() => setIsActive(!isActive)}
-            >
-              Sign In
-            </button>
           </div>
         </div>
       </div>

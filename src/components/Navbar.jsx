@@ -1,8 +1,10 @@
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "../contextapi/UserAuth";
 
 const Title = () => {
   const [pageno, setPageNo] = useState(0);
+  const { loggedIn } = useAuth();
   const getLinkStyle = (key) => {
     return `text-l font-semibold px-4 py-2 rounded-xl w-30 transition-all duration-300 transform ${
       pageno === key
@@ -26,7 +28,7 @@ const Title = () => {
           Home
         </NavLink>
         <NavLink
-          to="aboutus"
+          to="/about"
           key={1}
           className={getLinkStyle(1)}
           onClick={(pageno) => setPageNo(1)}
@@ -34,7 +36,7 @@ const Title = () => {
           About Us
         </NavLink>
         <NavLink
-          to="explore"
+          to={`${loggedIn ? "/explore" : "/login"}`}
           key={2}
           className={getLinkStyle(2)}
           onClick={(pageno) => setPageNo(2)}
