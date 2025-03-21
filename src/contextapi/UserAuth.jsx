@@ -14,96 +14,131 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
-  const navigate = useNavigate();
+  const [loadingAuth, setLoadingAuth] = useState(true); // ✅ Track auth loading
   const [groups, setGroups] = useState([]);
-  // Check auth state on app load
+  const [loading, setLoading] = useState(true); // ✅ For group loading
+
+  const navigate = useNavigate();
+
+  // ✅ Delete group function
+  const deleteGroup = async (groupId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/groups/${groupId}`, {
+        // ✅ Fix API URL
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json(); // ✅ Parse error message
+        throw new Error(errorData.error || "Failed to delete group");
+      }
+
+      setGroups((prevGroups) =>
+        prevGroups.filter((group) => group._id !== groupId)
+      );
+    } catch (error) {
+      console.error("❌ Error deleting group:", error.message);
+    }
+  };
+
+  // ✅ Check auth state on app load
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
-        await currentUser.reload(); // Ensure latest data is fetched
+        await currentUser.reload();
         setUser({
           uid: currentUser.uid,
-          name: currentUser.displayName || "", // Ensure name is set
+          name: currentUser.displayName || "",
           email: currentUser.email,
         });
-        setLoggedIn(true); // ✅ Mark as logged in
+        setLoggedIn(true);
       } else {
         setUser(null);
-        setLoggedIn(false); // ✅ Mark as logged out
+        setLoggedIn(false);
+        setGroups([]); // ✅ Ensure groups are cleared on logout
       }
+      setLoadingAuth(false); // ✅ Stop auth loading
     });
 
     return () => unsubscribe();
   }, []);
 
-  // Signup function (includes updating display name)
+  // ✅ Signup function with improved error handling
   const signup = async (name, email, password) => {
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      await updateProfile(userCredential.user, { displayName: name });
+      await userCredential.user.reload();
 
-    // Ensure displayName is set
-    await updateProfile(userCredential.user, { displayName: name });
+      setUser({
+        uid: userCredential.user.uid,
+        name,
+        email: userCredential.user.email,
+      });
 
-    // Reload user to ensure the update is applied
-    await userCredential.user.reload();
-
-    // Set user state
-    setUser({
-      uid: userCredential.user.uid,
-      name: userCredential.user.displayName, // Fetch updated name
-      email: userCredential.user.email,
-    });
-
-    setLoggedIn(true); // ✅ Mark as logged in
-
-    return userCredential.user;
-  };
-
-  // Login function
-  const login = async (email, password) => {
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    const user = userCredential.user;
-
-    // Reload user to get updated data
-    await user.reload();
-
-    // If displayName is missing, set a default name
-    if (!user.displayName) {
-      const nameFromEmail = email.split("@")[0]; // Extract name from email
-      await updateProfile(user, { displayName: nameFromEmail });
-      await user.reload(); // Reload to apply changes
+      setLoggedIn(true);
+      return userCredential.user;
+    } catch (error) {
+      console.error("Signup error:", error);
+      throw error;
     }
-
-    // Update user state
-    setUser({
-      uid: user.uid,
-      name: user.displayName || nameFromEmail,
-      email: user.email,
-    });
-
-    setLoggedIn(true); // ✅ Mark as logged in
-
-    return user;
   };
 
-  // Logout function
+  // ✅ Login function
+  const login = async (email, password) => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      await user.reload();
+
+      let name = user.displayName;
+      if (!name) {
+        name = email.split("@")[0];
+        await updateProfile(user, { displayName: name });
+        await user.reload();
+      }
+
+      setUser({ uid: user.uid, name, email: user.email });
+      setLoggedIn(true);
+      return user;
+    } catch (error) {
+      console.error("Login error:", error);
+      throw error;
+    }
+  };
+
+  // ✅ Logout function
   const logout = async () => {
+    setGroups([]); // ✅ Clear groups immediately before logging out
     await signOut(auth);
     setUser(null);
     setLoggedIn(false);
-    navigate("/"); // ✅ Mark as logged out
+    navigate("/");
   };
 
   return (
     <AuthContext.Provider
-      value={{ user, loggedIn, signup, login, logout, groups, setGroups }}
+      value={{
+        user,
+        loggedIn,
+        signup,
+        login,
+        logout,
+        groups,
+        setGroups,
+        loading,
+        setLoading,
+        deleteGroup,
+        loadingAuth, // ✅ Expose loading state
+      }}
     >
       {children}
     </AuthContext.Provider>

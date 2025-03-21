@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import "./GroupCard.css";
-import GroupCardInfo from "./GroupCardInfo";
 import { Link } from "react-router-dom";
 import { useAuth } from "../contextapi/UserAuth";
+import { TrashIcon } from "@heroicons/react/24/solid";
+import { groupReducer, initialState } from "../utils/Groupreducer";
 
 const getRandomLightColor = () => {
-  const hue = Math.floor(Math.random() * 360); // Restrict to 360 to stay within HSL range
-  return `hsl(${hue}, 72%, 76%)`; // Light color with high saturation and brightness
+  const hue = Math.floor(Math.random() * 360);
+  return `hsl(${hue}, 72%, 76%)`;
 };
 
 const Symbols = ["user-friends", "briefcase", "home", "users"];
@@ -14,12 +15,18 @@ const Abbrev = ["Trip", "Office", "Family", "Team"];
 
 export default function GroupCard({ group }) {
   const [style, setStyle] = useState({ backgroundColor: "" });
-  const { groups } = useAuth();
+  const { user, groups, deleteGroup } = useAuth(); // ✅ Combined useAuth call
+
   useEffect(() => {
     setStyle({ backgroundColor: getRandomLightColor() });
-  }, []); // Runs only once on mount
+  }, []);
 
-  // Find category index
+  const [state, dispatch] = useReducer(groupReducer, {
+    ...initialState,
+    groups,
+    createdBy: user?.email || "",
+  });
+
   const categoryIndex = Abbrev.indexOf(group.category);
   const categorySymbol =
     categoryIndex !== -1 ? Symbols[categoryIndex] : "users";
@@ -28,10 +35,8 @@ export default function GroupCard({ group }) {
     <li>
       <div className="group-card">
         <div className="group-header" style={style}>
-          <h2 className="group-name">{group.name}</h2>{" "}
-          {/* Fixed property name */}
-          <p className="group-description">{group.description}</p>{" "}
-          {/* Fixed property name */}
+          <h2 className="group-name">{group.name}</h2>
+          <p className="group-description">{group.description}</p>
           <div className="edit-icon">
             <i
               className={`fas fa-${categorySymbol} 
@@ -54,10 +59,23 @@ export default function GroupCard({ group }) {
             </span>
           </div>
         </div>
+        <div
+          className="relative flex justify-between items-center py-[6px] px-2 rounded-lg shadow-md 
+                transition-all duration-300"
+        >
+          <Link
+            to={`/groupinfo/${group._id}`}
+            className="flex-1 text-center font-bold text-blue-600 bg-blue-600 bg-opacity-20 py-2 rounded-md hover:bg-blue-600 hover:bg-opacity-25 hover:scale-101"
+          >
+            View Group &#x2197;
+          </Link>
 
-        <Link to={`/groupinfo/${group.name}`} className="group-card__link">
-          View Group &#x2197;
-        </Link>
+          <TrashIcon
+            onClick={() => deleteGroup(group._id)} // ✅ Fixed event handler
+            className="w-10 h-10 mx-1 rounded-md bg-red-500 bg-opacity-20 py-1 text-red-500 cursor-pointer transition-all duration-300 transform 
+               hover:text-red-700 hover:scale-110 hover:rotate-12 active:scale-90"
+          />
+        </div>
       </div>
     </li>
   );

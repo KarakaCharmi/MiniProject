@@ -64,33 +64,41 @@ app.post("/groups", async (req, res) => {
 
 // ✅ API to Fetch All Groups
 app.get("/groups", async (req, res) => {
-  try {
-    const groups = await Group.find();
-    console.log("📤 Sending All Groups");
-    res.json(groups);
-  } catch (error) {
-    console.error("❌ Error fetching groups:", error);
-    res.status(500).json({ message: "Error fetching groups", error });
+  const email = req.query.email?.trim(); // Ensure email is properly extracted
+
+  if (!email) {
+    console.error("❌ No email provided in request.");
+    return res.status(400).json({ error: "User email is required" });
   }
-});
 
-// ✅ API to Fetch Groups by User Email (Fix for 404 Error)
-app.get("/groups/:email", async (req, res) => {
+  console.log(`📥 Fetching groups for: ${email}`);
+
   try {
-    const { email } = req.params;
-    console.log(`📥 Fetching groups for email: ${email}`);
-
     const userGroups = await Group.find({ createdBy: email });
-
-    if (!userGroups.length) {
-      return res.status(404).json({ error: "No groups found for this user" });
-    }
-
-    console.log(`📤 Found ${userGroups.length} groups`);
+    console.log(`📤 Found ${userGroups.length} groups for ${email}`);
     res.json(userGroups);
   } catch (error) {
-    console.error("❌ Error fetching user's groups:", error);
-    res.status(500).json({ error: "Internal server error" });
+    // console.error("❌ Error fetching user's groups:", error);
+    // res.status(500).json({ error: "Internal server error" });
+  }
+});
+app.delete("/groups/:id", async (req, res) => {
+  try {
+    const { id } = req.params; // ✅ Get `id` from URL params
+
+    if (!id) {
+      return res.status(400).json({ error: "Group ID is required" });
+    }
+
+    const deletedGroup = await Group.findByIdAndDelete(id); // ✅ Delete by ID
+    if (!deletedGroup) {
+      return res.status(404).json({ error: "Group not found" });
+    }
+
+    res.status(200).json({ message: "Group deleted successfully" });
+  } catch (error) {
+    console.error("❌ Error deleting group:", error);
+    res.status(500).json({ error: "Failed to delete group" });
   }
 });
 

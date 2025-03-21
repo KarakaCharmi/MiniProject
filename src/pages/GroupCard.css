@@ -109,21 +109,3 @@
   border-radius: 50%;
   border: 2px solid white;
 }
-.group-card a {
-  width: 100%;
-  display: block;
-  text-align: center;
-  padding: 12px;
-  background: #a9d6e5;
-  color: black;
-  font-weight: bold;
-  font-family: "Roboto", serif;
-  /* border-radius: px; Rounded full */
-  transition: all 0.3s ease-in-out;
-}
-
-.group-card a:hover {
-  background: #61a5c2;
-  color: white;
-  transform: scale(1.05);
-}

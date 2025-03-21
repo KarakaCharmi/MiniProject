@@ -3,6 +3,7 @@ import { NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "../contextapi/UserAuth";
 // import GroupCard from "./GroupCard";
 import axios from "axios";
+import Chatbot from "./Chatbot";
 // import { Link } from "react-router-dom";
 // import { useAuth } from "../contextapi/UserAuth";
 
@@ -103,8 +104,8 @@ export function Sidebar() {
 const MainPage = () => {
   // const [option, setIsOption] = useState("CreateGroup");
   // Store created groups
-  const { user, groups, setGroups } = useAuth();
-
+  const { setGroups } = useAuth();
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   // Fetch groups from database when the component mounts
   useEffect(() => {
     const fetchGroups = async () => {
@@ -120,19 +121,45 @@ const MainPage = () => {
   }, []); // Runs only once when the component mounts
 
   // Function to add a new group to state
-  const addGroup = (newGroup) => {
-    setGroups([...groups, newGroup]);
-  };
+  // const addGroup = (newGroup) => {
+  //   setGroups([...groups, newGroup]);
+  // };
 
   return (
     <div className="flex">
       <div className="w-[350px] fixed h-screen top-0 left-0">
         <Sidebar />
       </div>
-      <div className="flex-1 ml-[350px]  mt-10 right-0">
+      <div
+        className={`flex-1 ml-[350px] mt-10 right-0 ${
+          isChatbotOpen ? "blur-sm" : ""
+        }`}
+      >
         <Outlet />
       </div>
+      {/* /* Chatbot Button */}
+      <div className="fixed bottom-5 right-5 z-50">
+        <div
+          onMouseDown={() => setIsChatbotOpen(!isChatbotOpen)}
+          className="relative p-[1px] rounded-full bg-gradient-to-r from-cyan-400 to-blue-500"
+        >
+          <button className="p-3 w-auto bg-gray-900 hover:bg-gray-800 font-mono text-cyan-400 rounded-full shadow-lg flex items-center justify-center w-12 h-12 border-2 border-transparent bg-clip-padding relative before:absolute before:inset-0 before:rounded-full before:p-[2px] before:bg-gradient-to-r before:from-cyan-400 before:to-blue-500 before:-z-10">
+            💬 Chat
+          </button>
+        </div>
+      </div>
+
+      {/* Overlay and Chatbot */}
+      {isChatbotOpen && (
+        <div>
+          <Chatbot
+            isOpen={isChatbotOpen}
+            onClose={() => setIsChatbotOpen(false)}
+          />
+        </div>
+      )}
     </div>
   );
 };
+
 export default MainPage;

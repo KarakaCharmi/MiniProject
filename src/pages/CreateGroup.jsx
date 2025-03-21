@@ -1,97 +1,76 @@
-import { useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import "./CreateGroup.css";
 import axios from "axios";
 import { useAuth } from "../contextapi/UserAuth";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { groupReducer, initialState } from "../utils/Groupreducer";
 
 const API_URL = "http://localhost:5000";
 
-const initialState = {
-  groupName: "",
-  groupDescription: "",
-  members: [],
-  currency: "",
-  category: "",
-  createdBy: "", // Will be set dynamically
-};
-
-function reducer(state, action) {
-  switch (action.type) {
-    case "SET_FIELD":
-      return { ...state, [action.field]: action.value };
-    case "ADD_MEMBER":
-      if (
-        action.email &&
-        !state.members.includes(action.email) &&
-        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(action.email)
-      ) {
-        return { ...state, members: [...state.members, action.email] };
-      }
-      return state;
-    case "REMOVE_MEMBER":
-      return {
-        ...state,
-        members: state.members.filter((email) => email !== action.email),
-      };
-    case "RESET":
-      return { ...initialState, createdBy: state.createdBy };
-    default:
-      return state;
-  }
-}
-
 export default function CreateGroup() {
-  const { user } = useAuth(); // ✅ Move useAuth() inside the component
-  const [state, dispatch] = useReducer(reducer, {
-    ...initialState,
-    createdBy: user?.email || "", // Set createdBy dynamically
-  });
+  const { user, groups } = useAuth();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [memberInput, setMemberInput] = useState("");
 
+  // ✅ Ensure createdBy is always updated
+  const [state, dispatch] = useReducer(groupReducer, {
+    ...initialState,
+    groups,
+    createdBy: user?.email || "",
+  });
+
+  useEffect(() => {
+    if (user?.email) {
+      dispatch({ type: "SET_FIELD", field: "createdBy", value: user.email });
+    }
+  }, [user]);
+
+  // ✅ Prevent invalid emails
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      dispatch({ type: "ADD_MEMBER", email: memberInput.trim().toLowerCase() });
-      setMemberInput("");
+      const email = memberInput.trim().toLowerCase();
+      if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        dispatch({ type: "ADD_MEMBER", email });
+        setMemberInput("");
+      } else {
+        toast.error("Invalid email format!", { autoClose: 2000 });
+      }
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
-    // Extract values from state
-    const {
-      groupName,
-      groupDescription,
-      members,
-      currency,
-      category,
-      createdBy,
-    } = state;
-
-    // Ensure createdBy is not empty (if user is logged in)
-    if (!createdBy) {
-      console.error("Error: User is not authenticated.");
+    if (!state.createdBy) {
+      toast.error("You must be logged in to create a group.");
+      setLoading(false);
       return;
     }
 
     const groupData = {
-      name: groupName, // ✅ Correctly mapped
-      description: groupDescription, // ✅ Correctly mapped
-      members,
-      currency,
-      category,
-      createdBy, // ✅ Use createdBy from state
+      name: state.groupName,
+      description: state.groupDescription,
+      members: state.members,
+      currency: state.currency,
+      category: state.category,
+      createdBy: state.createdBy,
     };
 
     try {
       const response = await axios.post(`${API_URL}/groups`, groupData);
-      console.log("Group created successfully:", response.data);
-      // Redirect to Groups page
+      toast.success("Group created successfully!", { autoClose: 3000 });
+
+      setTimeout(() => navigate("/explore/groups"), 1000);
       dispatch({ type: "RESET" });
-      setIsOption("Groups"); // Reset form fields
     } catch (error) {
-      console.error("Error creating group:", error);
+      toast.error("Error creating group. Please try again.");
+      console.error("API Error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -191,8 +170,8 @@ export default function CreateGroup() {
             <option value="Home">Home</option>
           </select>
         </div>
-        <button type="submit" className="submit-btn">
-          Create Group
+        <button type="submit" className="submit-btn" disabled={loading}>
+          {loading ? "Creating..." : "Create Group"}
         </button>
       </form>
     </div>
