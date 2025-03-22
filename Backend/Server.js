@@ -78,7 +78,7 @@ app.get("/groups", async (req, res) => {
     console.log(`📤 Found ${userGroups.length} groups for ${email}`);
     res.json(userGroups);
   } catch (error) {
-    // console.error("❌ Error fetching user's groups:", error);
+    console.error("❌ Error fetching user's groups:", error);
     // res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -101,7 +101,54 @@ app.delete("/groups/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to delete group" });
   }
 });
+app.post("/groups/:id/transactions", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { amount, description, category, date, paidBy, splitBetween } =
+      req.body;
 
+    console.log(`📥 Adding transaction to group ID: ${id}`);
+    console.log("📥 Transaction data:", req.body);
+
+    // Validate required fields
+    if (!amount || !paidBy) {
+      return res
+        .status(400)
+        .json({ error: "Amount and paidBy are required fields" });
+    }
+
+    const newTransaction = {
+      amount,
+      description: description || "",
+      category: category || "Other",
+      date: date || new Date(),
+      paidBy,
+      splitBetween: splitBetween || [],
+    };
+
+    const updatedGroup = await Group.findByIdAndUpdate(
+      id,
+      { $push: { transactions: newTransaction } },
+      { new: true }
+    );
+
+    if (!updatedGroup) {
+      return res.status(404).json({ error: "Group not found" });
+    }
+
+    console.log(`✅ Transaction added to group: ${updatedGroup.name}`);
+    res.status(201).json(updatedGroup);
+  } catch (error) {
+    console.error("❌ Error adding transaction:", error);
+
+    // Check if error is due to invalid MongoDB ID format
+    if (error.name === "CastError" && error.kind === "ObjectId") {
+      return res.status(400).json({ error: "Invalid group ID format" });
+    }
+
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 // Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

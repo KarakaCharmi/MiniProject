@@ -4,12 +4,18 @@ import "./index.css";
 import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./contextapi/UserAuth.jsx";
+import { GroupsContextProvider } from "./contextapi/GroupsContext/GroupsContext.jsx";
+import { BillContextProvider } from "./features/PayBill/BillContextApi.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <App />
+        <GroupsContextProvider>
+          <BillContextProvider>
+            <App />
+          </BillContextProvider>
+        </GroupsContextProvider>
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>
