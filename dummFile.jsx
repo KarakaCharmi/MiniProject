@@ -13,37 +13,39 @@ app.use(cors());
 const MONGO_URL = process.env.MONGO_URI || "mongodb://localhost:27017/groupDB";
 
 mongoose
-  .connect(MONGO_URL)
+  .connect(MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-// Define Transaction Schema
-
+const transactionSchema = new mongoose.Schema({
+  amount: { type: Number, required: true },
+  category: { type: String, default: "" },
+  date: { type: Date, default: Date.now },
+  paidBy: { type: String, required: true },
+  splitBetween: { type: [String], default: [] },
+});
 // Define Group Schema
 const groupSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  description: { type: String, default: "" },
+  name: { type: String, required: true }, // Changed from groupName
+  description: { type: String, default: "" }, // Changed from groupDescription
   members: { type: [String], default: [] },
   currency: { type: String, default: "USD" },
   category: { type: String, default: "General" },
   createdBy: { type: String, required: true },
-  transactions: [
-    {
-      amount: { type: Number, required: true, min: 0 },
-      category: { type: String, default: "Other" },
-      date: { type: Date, default: Date.now },
-      paidBy: { type: String, required: true },
-      splitBetween: { type: [String], default: [] },
-    },
-  ],
+  transactions: { type: [transactionSchema], default: [] },
 });
+
+const Transaction = mongoose.model("Transaction", transactionSchema);
 
 const Group = mongoose.model("Group", groupSchema);
 
 // ✅ API to Create a Group
 app.post("/groups", async (req, res) => {
   try {
-    console.log("📥 Received Request Body:", req.body);
+    console.log("📥 Received Request Body:", req.body); // Debugging log
 
     const { name, description, members, currency, category, createdBy } =
       req.body;
@@ -70,9 +72,7 @@ app.post("/groups", async (req, res) => {
   }
 });
 
-//Checking
-
-/* app.get("/groups", async (req, res) => {
+app.get("/groups", async (req, res) => {
   try {
     const groups = await Group.find();
     console.log("📤 Sending All Groups");
@@ -81,10 +81,11 @@ app.post("/groups", async (req, res) => {
     console.error("❌ Error fetching groups:", error);
     res.status(500).json({ message: "Error fetching groups", error });
   }
-}); */
+});
+
 // ✅ API to Fetch All Groups
-app.get("/groups", async (req, res) => {
-  const email = req.query.email?.trim();
+/* app.get("/groups", async (req, res) => {
+  const email = req.query.email?.trim(); // Ensure email is properly extracted
 
   if (!email) {
     console.error("❌ No email provided in request.");
@@ -99,20 +100,18 @@ app.get("/groups", async (req, res) => {
     res.json(userGroups);
   } catch (error) {
     console.error("❌ Error fetching user's groups:", error);
-    res.status(500).json({ error: "Internal server error" });
+    // res.status(500).json({ error: "Internal server error" });
   }
-});
-
-// ✅ API to Delete a Group
+}); */
 app.delete("/groups/:id", async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params; // ✅ Get `id` from URL params
 
     if (!id) {
       return res.status(400).json({ error: "Group ID is required" });
     }
 
-    const deletedGroup = await Group.findByIdAndDelete(id);
+    const deletedGroup = await Group.findByIdAndDelete(id); // ✅ Delete by ID
     if (!deletedGroup) {
       return res.status(404).json({ error: "Group not found" });
     }
@@ -123,8 +122,6 @@ app.delete("/groups/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to delete group" });
   }
 });
-
-// ✅ API to Add a Transaction to a Group
 app.post("/groups/:id/transactions", async (req, res) => {
   try {
     const { id } = req.params;
@@ -140,14 +137,13 @@ app.post("/groups/:id/transactions", async (req, res) => {
         .json({ error: "Amount and paidBy are required fields" });
     }
 
-    // Create a plain transaction object
-    const newTransaction = {
+    const newTransaction = new Transaction({
       amount,
       category: category || "Food",
       date: date || new Date(),
       paidBy,
       splitBetween: splitBetween || [],
-    };
+    });
 
     const updatedGroup = await Group.findByIdAndUpdate(
       id,
@@ -164,6 +160,7 @@ app.post("/groups/:id/transactions", async (req, res) => {
   } catch (error) {
     console.error("❌ Error adding transaction:", error);
 
+    // Check if error is due to invalid MongoDB ID format
     if (error.name === "CastError" && error.kind === "ObjectId") {
       return res.status(400).json({ error: "Invalid group ID format" });
     }
@@ -171,7 +168,6 @@ app.post("/groups/:id/transactions", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
 // Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

@@ -14,14 +14,15 @@ export function groupReducer(state, action) {
     case "SET_FIELD":
       return { ...state, [action.field]: action.value };
     case "ADD_MEMBER":
-      if (
+      /*  if (
         action.email &&
         !state.members.includes(action.email) &&
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(action.email)
       ) {
         return { ...state, members: [...state.members, action.email] };
-      }
-      return state;
+      } */
+
+      return { ...state, members: [...state.members, action.email] };
     case "REMOVE_MEMBER":
       return {
         ...state,

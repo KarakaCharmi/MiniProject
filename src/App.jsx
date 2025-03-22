@@ -32,10 +32,10 @@ function App() {
           />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="groups" element={<Groups userEmail={user?.email} />} />
+          <Route path="groups/:id" element={<GroupCardInfo />} />
+          <Route path="groups/:id/newExpense" element={<AddingNewExpense />} />
         </Route>
 
-        <Route path="/groupinfo/:id" element={<GroupCardInfo />} />
-        <Route path="groups/newExpense" element={<AddingNewExpense />} />
         <Route path="about" element={<About />} />
         <Route path="*" element={<Home />} />
       </Routes>

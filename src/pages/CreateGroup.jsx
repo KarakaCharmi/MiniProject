@@ -31,13 +31,11 @@ export default function CreateGroup() {
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      const email = memberInput.trim().toLowerCase();
-      if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        dispatch({ type: "ADD_MEMBER", email });
-        setMemberInput("");
-      } else {
-        toast.error("Invalid email format!", { autoClose: 2000 });
-      }
+      dispatch({
+        type: "ADD_MEMBER",
+        email: memberInput.trim().toLowerCase(),
+      });
+      setMemberInput("");
     }
   };
 
@@ -123,7 +121,7 @@ export default function CreateGroup() {
             ))}
             <input
               type="text"
-              placeholder="Add Member (Email)"
+              placeholder="Add Member (Name)"
               value={memberInput}
               onChange={(e) => setMemberInput(e.target.value)}
               onKeyDown={handleKeyDown}
