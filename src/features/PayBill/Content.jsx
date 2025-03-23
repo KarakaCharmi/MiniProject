@@ -47,7 +47,7 @@ function Content() {
 
       <div
         className="bg-purple-400 text-white text-center p-4 text-xl mt-10 rounded-b-xl flex gap-4 justify-center"
-        onClick={() => navigate("/groups/newExpense")}
+        onClick={() => navigate("newExpense")}
       >
         <span className="tracking-widest text-2xl">NEXT</span>{" "}
         <i className="fas fa-arrow-right text-2xl"></i>

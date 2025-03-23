@@ -9,13 +9,14 @@ function BillContextProvider({ children }) {
   const [members, setMembers] = useState([]);
   const numOfMembers = members.length;
   const [numOfMembersChecked, setNumOfMembersChecked] = useState(numOfMembers);
-
+  const [checkedMembers, setCheckedMembers] = useState([]);
   //useEffect hook
   useEffect(
     function () {
       setNumOfMembersChecked(numOfMembers);
+      setCheckedMembers(members);
     },
-    [numOfMembers]
+    [numOfMembers, members]
   );
   //Handler functions
   function totalAmount(amount) {
@@ -32,7 +33,9 @@ function BillContextProvider({ children }) {
   function handleCheckedMembers(checked) {
     setNumOfMembersChecked(checked);
   }
-
+  function handleSetChecked(checked) {
+    setCheckedMembers(checked);
+  }
   return (
     <BillContext.Provider
       value={{
@@ -49,6 +52,8 @@ function BillContextProvider({ children }) {
         numOfMembers,
         numOfMembersChecked,
         handleCheckedMembers,
+        handleSetChecked,
+        checkedMembers,
       }}
     >
       {children}

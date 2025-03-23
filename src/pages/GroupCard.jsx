@@ -64,7 +64,7 @@ export default function GroupCard({ group }) {
                 transition-all duration-300"
         >
           <Link
-            to={`/groupinfo/${group._id}`}
+            to={`${group._id}`}
             className="flex-1 text-center font-bold text-blue-600 bg-blue-600 bg-opacity-20 py-2 rounded-md hover:bg-blue-600 hover:bg-opacity-25 hover:scale-101"
           >
             View Group &#x2197;

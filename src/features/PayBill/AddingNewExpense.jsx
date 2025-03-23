@@ -1,13 +1,42 @@
 import { HiArrowLeftCircle } from "react-icons/hi2";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Modal from "../../ui/Modal";
 import PayBill from "./PayBill";
 import SplitBill from "./SplitBill";
 import { useBillContext } from "./BillContextApi";
+import { useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+const API_URL = "http://localhost:5000";
 
 export default function AddingNewExpense() {
-  const { amount, whoPaid } = useBillContext();
+  const { amount, whoPaid, checkedMembers } = useBillContext();
+  const [purpose, setPurpose] = useState("");
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  //Event Handler
+
+  async function handleSaveTransaction() {
+    const newTransaction = {
+      amount: amount,
+      paidBy: whoPaid,
+      splitBetween: checkedMembers,
+      category: purpose,
+    };
+
+    try {
+      const response = await axios.post(
+        `${API_URL}/groups/${id}/transactions`,
+        newTransaction
+      );
+      toast.success("Expense added successfully!", { autoClose: 1000 });
+      setTimeout(() => navigate("/explore/groups"), 1000);
+    } catch (error) {
+      toast.error("Error in adding expense, Please try again.");
+      console.error("API Error:", error);
+    }
+  }
   return (
     <div className="bg-gray-100 min-h-screen  max-w-4xl m-auto my-5">
       <div className="bg-fuchsia-800 text-white p-4 flex items-center justify-between">
@@ -27,6 +56,8 @@ export default function AddingNewExpense() {
             <input
               className="ml-2 flex-1 border-b border-gray-300 focus:outline-none"
               placeholder="e.g. Peanut butter"
+              value={purpose}
+              onChange={(e) => setPurpose(e.target.value)}
               type="text"
             />
           </div>
@@ -57,7 +88,10 @@ export default function AddingNewExpense() {
         </div>
         <SplitBill />
         <button className="text-blue-500 mb-4">SPLIT BY AMOUNTS</button>
-        <button className="bg-fuchsia-700 text-white w-full py-2 rounded">
+        <button
+          className="bg-fuchsia-700 text-white w-full py-2 rounded"
+          onClick={handleSaveTransaction}
+        >
           SAVE
         </button>
       </div>
