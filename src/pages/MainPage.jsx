@@ -104,13 +104,15 @@ export function Sidebar() {
 const MainPage = () => {
   // const [option, setIsOption] = useState("CreateGroup");
   // Store created groups
-  const { setGroups } = useAuth();
+  const { setGroups, user } = useAuth();
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   // Fetch groups from database when the component mounts
   useEffect(() => {
     const fetchGroups = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/groups");
+        const res = await axios.get(
+          `http://localhost:5000/groups?email=${user?.email}`
+        );
         setGroups(res.data); // Set state with fetched groups
       } catch (error) {
         console.error("Error fetching groups:", error);
@@ -118,7 +120,7 @@ const MainPage = () => {
     };
 
     fetchGroups();
-  }, []); // Runs only once when the component mounts
+  }, [user?.email]); // Runs only once when the component mounts
 
   // Function to add a new group to state
   // const addGroup = (newGroup) => {

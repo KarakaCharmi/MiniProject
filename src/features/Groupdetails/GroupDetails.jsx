@@ -4,12 +4,13 @@ import TotalSpent from "./TotalSpent";
 import Transactions from "./Transactions";
 import Modal from "../../ui/Modal";
 import PayBill from "../PayBill/PayBill";
-import { useGroups } from "../../contextapi/GroupsContext/GroupsContext";
 import { useBillContext } from "../PayBill/BillContextApi";
 import { useEffect } from "react";
 import { useAuth } from "../../contextapi/UserAuth";
+import { useParams } from "react-router-dom";
 
-export default function GroupDetails({ id }) {
+export default function GroupDetails() {
+  const { id } = useParams();
   const { groups } = useAuth();
   const { setMembers } = useBillContext();
 
@@ -23,7 +24,7 @@ export default function GroupDetails({ id }) {
   const {
     name = "Unknown Group",
     description = "No description available",
-    transactions = [],
+    transactions,
     members = [],
   } = group;
 
@@ -41,14 +42,16 @@ export default function GroupDetails({ id }) {
           <div className="indent-8">&mdash; {description}</div>
         </div>
       </div>
-
-      <div className="p-4 bg-slate-100">
-        <Transactions transactions={transactions} />
-        <Debts transactions={transactions} />
-        <TotalSpent transactions={transactions} />
-        <RecentActivity />
-      </div>
-
+      {transactions.length === 0 ? (
+        <div className="p-4 bg-slate-100">No transactions yet...!</div>
+      ) : (
+        <div className="p-4 bg-slate-100">
+          <Transactions transactions={transactions} />
+          <Debts transactions={transactions} />
+          <TotalSpent transactions={transactions} />
+          <RecentActivity />
+        </div>
+      )}
       <Modal>
         <Modal.Open opens="payBill">
           <button className="sticky left-3/4 bottom-10 bg-cyan-800 text-white px-4 py-2 rounded-full shadow-lg font-bold text-2xl">
