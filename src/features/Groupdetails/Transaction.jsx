@@ -1,4 +1,5 @@
 import { format } from "date-fns";
+import { useBillContext } from "../PayBill/BillContextApi";
 const getRandomLightColor = () => {
   const hue = Math.floor(Math.random() * 360);
   return `hsl(${hue}, 72%, 76%)`;
@@ -6,13 +7,14 @@ const getRandomLightColor = () => {
 export default function Transaction({ item }) {
   //Destructing the item
   const { category, amount, paidBy, date, splitBetween } = item;
+  const { currency } = useBillContext();
   const formattedDateTime = format(date, "MMMM dd, yyyy h:mm a");
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between py-4 px-3">
       <div className="flex items-center">
-        <div className="bg-cyan-400 text-white rounded-full h-10 w-10 flex items-center justify-center">
-          {paidBy[0].toUpperCase()}
-        </div>
+        {/* <div className="bg-cyan-400 text-white rounded-full h-14 w-14 flex items-center justify-center text-lg font-semibold">
+          {category[0].toUpperCase()}
+        </div> */}
         <div className="ml-4">
           <h3 className="font-bold text-cyan-900">{category}</h3>
           <p className="text-gray-500 text-sm">{formattedDateTime}</p>
@@ -22,7 +24,12 @@ export default function Transaction({ item }) {
         </div>
       </div>
       <div className="text-right">
-        <p className="text-cyan-900 font-bold">{amount}</p>
+        <p className="text-cyan-900 font-bold">
+          <span>
+            {currency === "INR" ? "₹" : currency === "USD" ? "$" : "₵"}
+          </span>
+          {amount}
+        </p>
         <div className="flex items-center justify-end mt-2 ">
           {/* <div className="bg-cyan-600 text-white rounded-full h-8 w-8 flex items-center justify-center text-xs relative">
             D
@@ -30,15 +37,17 @@ export default function Transaction({ item }) {
           <div className="bg-cyan-400 text-white rounded-full h-8 w-8 flex items-center justify-center text-xs ml-[-8px] relative">
             I
           </div> */}
-          {splitBetween.map((friend, index) => (
-            <div
-              style={{ backgroundColor: getRandomLightColor() }}
-              className=" text-white rounded-full h-8 w-8 flex items-center justify-center text-sm relative ml-[-8px] font-semibold"
-              key={index}
-            >
-              {friend[0].toUpperCase()}
-            </div>
-          ))}
+          {splitBetween
+            .filter((friend) => friend !== paidBy)
+            .map((friend, index) => (
+              <div
+                style={{ backgroundColor: getRandomLightColor() }}
+                className=" text-white rounded-full h-8 w-8 flex items-center justify-center text-sm relative ml-[-8px] font-semibold"
+                key={index}
+              >
+                {friend[0].toUpperCase()}
+              </div>
+            ))}
         </div>
       </div>
     </div>

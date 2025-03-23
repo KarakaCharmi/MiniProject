@@ -8,10 +8,13 @@ import { useGroups } from "../../contextapi/GroupsContext/GroupsContext";
 import { useBillContext } from "../PayBill/BillContextApi";
 import { useEffect } from "react";
 import { useAuth } from "../../contextapi/UserAuth";
+import { useParams } from "react-router-dom";
 
-export default function GroupDetails({ id }) {
+export default function GroupDetails() {
+  const { id } = useParams();
   const { groups } = useAuth();
   const { setMembers } = useBillContext();
+  console.log(id);
 
   // Ensure groups is defined before accessing find()
   if (!groups) {
