@@ -3,21 +3,6 @@ import { useParams } from "react-router-dom";
 import EachDebt from "../EachDebt";
 
 export default function Debts() {
-  /*  const { groups } = useAuth();
-  const { id } = useParams();
-  //Finding the group with the id
-
-  const { transactions, members } = groups.filter((group) => group._id === id);
-  //Creating a balanceSheet object for all members
-
-  const debts = {};
-
-  members.forEach((member) => {
-    debts[member] = 0;
-  });
-
-  if (!groups) return <div>Debts Loading....</div>; */
-
   const { groups } = useAuth();
   const { id } = useParams();
 
@@ -77,10 +62,9 @@ export default function Debts() {
           });
         })}
       </div>
-
-      <button className="mt-4 ml-8  bg-cyan-400 font-medium text-white px-4 py-2 rounded-lg w-fit h-9">
+      {/* <button className="mt-4 ml-8  bg-cyan-400 font-medium text-white px-4 py-2 rounded-lg w-fit h-9">
         SEND TO FRIENDS
-      </button>
+      </button> */}
     </div>
   );
 }
