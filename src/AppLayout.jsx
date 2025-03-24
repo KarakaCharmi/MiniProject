@@ -1,16 +1,16 @@
-import React from "react";
-import Title from "./components/Navbar";
-import Home from "./pages/Home";
+import { Outlet } from "react-router-dom";
+import Navbar from "./components/Navbar";
 import Footer from "./pages/Footer";
-
-const AppLayout = () => {
+const Layout = () => {
   return (
-    <div className="flex flex-col min-h-screen">
-      <div className="flex-grow">
-        <Home />
-      </div>
+    <div className="grid grid-rows-[1/2fr_6fr_1fr] h-screen">
+      <Navbar />
+      <main className="overflow-auto">
+        <Outlet />
+      </main>
+      <Footer />
     </div>
   );
 };
 
-export default AppLayout;
+export default Layout;

@@ -13,16 +13,19 @@ import Groups from "./pages/Groups";
 import CreateGroup from "./pages/CreateGroup";
 import GroupCardInfo from "./pages/GroupCardInfo";
 import AddingNewExpense from "./features/PayBill/AddingNewExpense";
-
+import AppLayout from "./AppLayout";
+import GroupSideBar from "./pages/GroupSideBar";
+import Participants from "./SideNavBarFeatures/Participants";
 function App() {
   const { user } = useAuth();
-
   return (
     <>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="about" element={<About />} />
+        </Route>
         <Route path="login" element={<Login />} />
-
         {/* Nested Routes inside MainPage */}
         <Route path="explore" element={<MainPage userEmail={user?.email} />}>
           <Route index element={<CreateGroup userEmail={user?.email} />} />
@@ -32,10 +35,13 @@ function App() {
           />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="groups" element={<Groups userEmail={user?.email} />} />
-          <Route path="groups/:id" element={<GroupCardInfo />} />
+
           <Route path="groups/:id/newExpense" element={<AddingNewExpense />} />
         </Route>
-
+        <Route path="explore/groups/:id" element={<GroupSideBar />}>
+          <Route path="participants" element={<Participants />} />
+          <Route index path="*" element={<GroupCardInfo />} />
+        </Route>
         <Route path="about" element={<About />} />
         <Route path="*" element={<Home />} />
       </Routes>

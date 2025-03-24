@@ -1,7 +1,7 @@
 import Button from "../components/Button";
 import TravelImage from "../images/Trip-amico.png";
 import { Typewriter } from "react-simple-typewriter";
-import Title from "../components/Navbar";
+// import Title from "../components/Navbar";
 import { useState } from "react";
 import Footer from "./Footer";
 import { Link } from "react-router-dom";
@@ -11,8 +11,7 @@ const Home = () => {
 
   return (
     <>
-      <div className="flex flex-col min-h-screen overflow-y-auto">
-        <Title />
+      <div className="flex flex-col ">
         <main className="flex-1">
           <div className="mx-20 flex flex-row justify-between items-center">
             <div>
@@ -32,7 +31,7 @@ const Home = () => {
                 </h1>
               </div>
               {/* Static Input and Button */}
-              <div className="pl-2 flex justify-between absolute w-auto border border-y-stone-200  rounded-xl hover:border-2 hover:border-cyan-700">
+              <div className="pl-2 flex justify-between  w-[400px] border border-y-stone-200  rounded-xl hover:border-2 hover:border-cyan-700">
                 <input
                   type="text"
                   placeholder="JohnDoe@gmail.com"
@@ -50,7 +49,6 @@ const Home = () => {
             />
           </div>
         </main>
-        <Footer />
       </div>
     </>
   );

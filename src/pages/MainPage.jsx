@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useParams } from "react-router-dom";
 import { useAuth } from "../contextapi/UserAuth";
 // import GroupCard from "./GroupCard";
 import axios from "axios";
@@ -129,9 +129,7 @@ const MainPage = () => {
 
   return (
     <div className="flex">
-      <div className="w-[350px] fixed h-screen top-0 left-0">
-        <Sidebar />
-      </div>
+      <div className="w-[350px] fixed h-screen top-0 left-0">{<Sidebar />}</div>
       <div
         className={`flex-1 ml-[350px] mt-10 right-0 ${
           isChatbotOpen ? "blur-sm" : ""

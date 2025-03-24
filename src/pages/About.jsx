@@ -1,5 +1,69 @@
+import { useState } from "react";
+import Photo1 from "../images/Photo.jpg";
+const teamMembers = [
+  {
+    name: "Alice",
+    role: "Frontend Developer",
+    img: Photo1,
+  },
+  {
+    name: "Bob",
+    role: "Backend Developer",
+    img: "https://via.placeholder.com/150",
+  },
+  {
+    name: "Charlie",
+    role: "ML Engineer",
+    img: "https://via.placeholder.com/150",
+  },
+  {
+    name: "David",
+    role: "UI/UX Designer",
+    img: "https://via.placeholder.com/150",
+  },
+  {
+    name: "Eve",
+    role: "Project Manager",
+    img: "https://via.placeholder.com/150",
+  },
+];
+
 const About = () => {
-  return <div>I am about</div>;
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+
+  return (
+    <>
+      <div className="bg-gray-900 text-white flex flex-col items-center p-20 min-h-screen">
+        <h2 className="text-4xl font-bold mb-10">Meet Our Team</h2>
+        <div className="flex gap-5">
+          {teamMembers.map((member, index) => (
+            <div
+              key={index}
+              className={`relative bg-gray-800 p-5 rounded-xl transition-all duration-300 overflow-hidden ${
+                hoveredIndex === index
+                  ? "w-64 shadow-[0_0_15px_rgba(0,255,255,0.8)] scale-105"
+                  : "w-40"
+              } h-72 flex flex-col items-center cursor-pointer`}
+              onMouseEnter={() => setHoveredIndex(index)}
+              onMouseLeave={() => setHoveredIndex(null)}
+            >
+              <img
+                src={member.img}
+                alt={member.name}
+                className={`rounded-full object-cover mb-4 transition-transform duration-300 border-4 ${
+                  hoveredIndex === index
+                    ? "w-36 h-36 border-cyan-400"
+                    : "w-28 h-28 border-gray-600"
+                }`}
+              />
+              <h3 className="text-xl font-semibold">{member.name}</h3>
+              <p className="text-gray-400">{member.role}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
+  );
 };
 
 export default About;
