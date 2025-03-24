@@ -123,6 +123,13 @@ export function AuthProvider({ children }) {
     setLoggedIn(false);
     navigate("/");
   };
+  function updateGroupMembers(groupId, updatedMembers) {
+    setGroups((prevGroups) =>
+      prevGroups.map((group) =>
+        group._id === groupId ? { ...group, members: updatedMembers } : group
+      )
+    );
+  }
 
   return (
     <AuthContext.Provider
@@ -137,7 +144,8 @@ export function AuthProvider({ children }) {
         loading,
         setLoading,
         deleteGroup,
-        loadingAuth, // ✅ Expose loading state
+        loadingAuth,
+        updateGroupMembers, // ✅ Expose loading state
       }}
     >
       {children}

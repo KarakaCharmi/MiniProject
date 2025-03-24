@@ -7,7 +7,13 @@ dotenv.config(); // Initialize dotenv
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Allow only your frontend
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 // MongoDB Connection
 const MONGO_URL = process.env.MONGO_URI || "mongodb://localhost:27017/groupDB";
@@ -100,6 +106,21 @@ app.get("/groups", async (req, res) => {
   } catch (error) {
     console.error("❌ Error fetching user's groups:", error);
     res.status(500).json({ error: "Internal server error" });
+  }
+});
+app.put("/groups/:id/members", async (req, res) => {
+  const { id } = req.params;
+  const { members } = req.body;
+
+  try {
+    const updatedGroup = await Group.findByIdAndUpdate(
+      id,
+      { members },
+      { new: true }
+    );
+    res.json(updatedGroup);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update members" });
   }
 });
 
