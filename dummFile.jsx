@@ -1,175 +1,147 @@
-import express from "express";
-import mongoose from "mongoose";
-import cors from "cors";
-import dotenv from "dotenv"; // Load .env variables
+import { useParams } from "react-router-dom";
+import { useAuth } from "../contextapi/UserAuth";
+import { useState } from "react";
+import { getDebts } from "../utils/getDebts";
 
-dotenv.config(); // Initialize dotenv
+export default function GroupMembers() {
+  const { groups, updateGroupMembers } = useAuth();
+  const { id } = useParams();
+  const group = groups.find((item) => item._id === id) || {};
+  const { groupMembers, transactions } = group;
 
-const app = express();
-app.use(express.json());
-app.use(cors());
+  const [members, setMembers] = useState(groupMembers || []);
+  const [newMember, setNewMember] = useState("");
+  const [message, setMessage] = useState("");
 
-// MongoDB Connection
-const MONGO_URL = process.env.MONGO_URI || "mongodb://localhost:27017/groupDB";
+  //Accesing the debts objects
 
-mongoose
-  .connect(MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => console.error("❌ MongoDB connection error:", err));
+  const debts = getDebts({ members, transactions });
+  const totalSpents = {};
+  members.forEach((member) => {
+    totalSpents[member] = 0;
+  });
 
-const transactionSchema = new mongoose.Schema({
-  amount: { type: Number, required: true },
-  category: { type: String, default: "" },
-  date: { type: Date, default: Date.now },
-  paidBy: { type: String, required: true },
-  splitBetween: { type: [String], default: [] },
-});
-// Define Group Schema
-const groupSchema = new mongoose.Schema({
-  name: { type: String, required: true }, // Changed from groupName
-  description: { type: String, default: "" }, // Changed from groupDescription
-  members: { type: [String], default: [] },
-  currency: { type: String, default: "USD" },
-  category: { type: String, default: "General" },
-  createdBy: { type: String, required: true },
-  transactions: { type: [transactionSchema], default: [] },
-});
+  transactions.forEach((transaction) => {
+    totalSpents[transaction.paidBy] += transaction.amount;
+  });
 
-const Transaction = mongoose.model("Transaction", transactionSchema);
+  console.log("TotalSpents:", totalSpents);
 
-const Group = mongoose.model("Group", groupSchema);
-
-// ✅ API to Create a Group
-app.post("/groups", async (req, res) => {
-  try {
-    console.log("📥 Received Request Body:", req.body); // Debugging log
-
-    const { name, description, members, currency, category, createdBy } =
-      req.body;
-
-    if (!name || !currency || !category || !createdBy) {
-      return res.status(400).json({ error: "Missing required fields" });
-    }
-
-    const newGroup = new Group({
-      name,
-      description: description || "",
-      members: members || [],
-      currency,
-      category,
-      createdBy,
-    });
-
-    const savedGroup = await newGroup.save();
-    console.log("✅ Group Saved:", savedGroup);
-    res.status(201).json(savedGroup);
-  } catch (error) {
-    console.error("❌ Error saving group:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-app.get("/groups", async (req, res) => {
-  try {
-    const groups = await Group.find();
-    console.log("📤 Sending All Groups");
-    res.json(groups);
-  } catch (error) {
-    console.error("❌ Error fetching groups:", error);
-    res.status(500).json({ message: "Error fetching groups", error });
-  }
-});
-
-// ✅ API to Fetch All Groups
-/* app.get("/groups", async (req, res) => {
-  const email = req.query.email?.trim(); // Ensure email is properly extracted
-
-  if (!email) {
-    console.error("❌ No email provided in request.");
-    return res.status(400).json({ error: "User email is required" });
+  function handleChange(e) {
+    setNewMember(e.target.value);
   }
 
-  console.log(`📥 Fetching groups for: ${email}`);
+  async function addMember() {
+    if (!newMember.trim()) {
+      setMessage("Please enter a name.");
+      return;
+    }
+    if (
+      members.some((member) => member.toLowerCase() === newMember.toLowerCase())
+    ) {
+      setMessage("Member already exists");
+      setNewMember("");
+      return;
+    }
 
-  try {
-    const userGroups = await Group.find({ createdBy: email });
-    console.log(`📤 Found ${userGroups.length} groups for ${email}`);
-    res.json(userGroups);
-  } catch (error) {
-    console.error("❌ Error fetching user's groups:", error);
-    // res.status(500).json({ error: "Internal server error" });
+    const updatedMembers = [...members, newMember];
+
+    try {
+      const response = await fetch(
+        `http://localhost:5000/groups/${id}/members`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ members: updatedMembers }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to update members");
+
+      // Update local state
+      setMembers(updatedMembers);
+      setNewMember("");
+
+      // Update global context (VERY IMPORTANT)
+      updateGroupMembers(id, updatedMembers);
+
+      console.log("Member added successfully!");
+    } catch (error) {
+      console.error("Error updating members:", error);
+      alert("Failed to add member. Please try again.");
+    }
   }
-}); */
-app.delete("/groups/:id", async (req, res) => {
-  try {
-    const { id } = req.params; // ✅ Get `id` from URL params
 
-    if (!id) {
-      return res.status(400).json({ error: "Group ID is required" });
-    }
+  return (
+    <div className="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
+      <h2 className="text-xl font-semibold mb-1">Group Members</h2>
+      <p className="text-gray-500 text-sm mb-4">
+        Manage members, assign roles, and invite new users
+      </p>
+      <table className="w-full border-collapse">
+        <thead>
+          <tr className="bg-gray-100 text-gray-600">
+            <th className="p-3 text-left">Name</th>
 
-    const deletedGroup = await Group.findByIdAndDelete(id); // ✅ Delete by ID
-    if (!deletedGroup) {
-      return res.status(404).json({ error: "Group not found" });
-    }
+            <th className="p-3 text-left">Balance</th>
+            <th className="p-3 text-left">Total Paid</th>
+          </tr>
+        </thead>
+        <tbody>
+          {members.map((member, index) => (
+            <tr key={index} className="border-b hover:bg-gray-50 transition">
+              <td className="p-3 flex items-center space-x-3">
+                <div
+                  className="w-10 h-10 flex items-center justify-center rounded-full text-white font-semibold "
+                  style={{
+                    backgroundColor: `hsl(${
+                      (member.charCodeAt(0) * 15) % 360
+                    }, 70%, 80%)`, // Light Color
+                    color: "black", // Dark text for better contrast
+                  }}
+                >
+                  {member.charAt(0).toUpperCase()}
+                </div>
 
-    res.status(200).json({ message: "Group deleted successfully" });
-  } catch (error) {
-    console.error("❌ Error deleting group:", error);
-    res.status(500).json({ error: "Failed to delete group" });
-  }
-});
-app.post("/groups/:id/transactions", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { amount, category, date, paidBy, splitBetween } = req.body;
+                <div>
+                  <strong>{member}</strong>
+                </div>
+              </td>
 
-    console.log(`📥 Adding transaction to group ID: ${id}`);
-    console.log("📥 Transaction data:", req.body);
+              <td
+                className={`p-3 ${
+                  balance < 0 ? "text-red-600" : "text-green-600"
+                }`}
+              >
+                ₹{(balance ?? 0).toFixed(2)}
+              </td>
+              <td className="p-3">₹{(totalPaid ?? 0).toFixed(2)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
-    // Validate required fields
-    if (!amount || !paidBy) {
-      return res
-        .status(400)
-        .json({ error: "Amount and paidBy are required fields" });
-    }
-
-    const newTransaction = new Transaction({
-      amount,
-      category: category || "Food",
-      date: date || new Date(),
-      paidBy,
-      splitBetween: splitBetween || [],
-    });
-
-    const updatedGroup = await Group.findByIdAndUpdate(
-      id,
-      { $push: { transactions: newTransaction } },
-      { new: true }
-    );
-
-    if (!updatedGroup) {
-      return res.status(404).json({ error: "Group not found" });
-    }
-
-    console.log(`✅ Transaction added to group: ${updatedGroup.name}`);
-    res.status(201).json(updatedGroup);
-  } catch (error) {
-    console.error("❌ Error adding transaction:", error);
-
-    // Check if error is due to invalid MongoDB ID format
-    if (error.name === "CastError" && error.kind === "ObjectId") {
-      return res.status(400).json({ error: "Invalid group ID format" });
-    }
-
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-// Start Server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
+      <div className="mt-4 flex items-center gap-2">
+        <input
+          type="text"
+          name="name"
+          value={newMember}
+          onChange={handleChange}
+          placeholder="Enter member name"
+          className="border p-2 rounded w-full"
+        />
+        <button
+          onClick={addMember}
+          className="bg-green-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-green-700"
+        >
+          Add
+        </button>
+      </div>
+      <p className="text-red-400 bg-red-500 bg-opacity-5 text-sm mt-2">
+        {message}
+      </p>
+    </div>
+  );
+}

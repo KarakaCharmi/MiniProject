@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 const API_URL = "http://localhost:5000";
 
 export default function AddingNewExpense() {
-  const { amount, whoPaid, checkedMembers } = useBillContext();
+  const { amount, whoPaid, checkedMembers, membersBill } = useBillContext();
   const [purpose, setPurpose] = useState("");
   const navigate = useNavigate();
   const { id } = useParams();
@@ -18,6 +18,7 @@ export default function AddingNewExpense() {
   //Event Handler
 
   async function handleSaveTransaction() {
+    console.log("memberbill", membersBill);
     const newTransaction = {
       amount: amount,
       paidBy: whoPaid,

@@ -10,6 +10,7 @@ function BillContextProvider({ children }) {
   const numOfMembers = members.length;
   const [numOfMembersChecked, setNumOfMembersChecked] = useState(numOfMembers);
   const [checkedMembers, setCheckedMembers] = useState([]);
+  const [isDisabled, setIsDisabled] = useState(false);
   //useEffect hook
   useEffect(
     function () {
@@ -18,6 +19,10 @@ function BillContextProvider({ children }) {
     },
     [numOfMembers, members]
   );
+  let membersBill;
+  if (numOfMembers > 0) {
+    membersBill = new Array(numOfMembers).fill(0);
+  }
   //Handler functions
   function totalAmount(amount) {
     setAmount(amount);
@@ -54,6 +59,9 @@ function BillContextProvider({ children }) {
         handleCheckedMembers,
         handleSetChecked,
         checkedMembers,
+        membersBill,
+        isDisabled,
+        setIsDisabled,
       }}
     >
       {children}
