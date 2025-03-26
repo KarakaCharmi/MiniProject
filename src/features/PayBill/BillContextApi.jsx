@@ -5,11 +5,14 @@ function BillContextProvider({ children }) {
   const [amount, setAmount] = useState(0);
   const [whoPaid, setWhoPaid] = useState("");
   const [currency, setCurrency] = useState("INR");
-  const [isReceipt, setIsReceipt] = useState("");
+  const [amountOrReceipt, setAmountOrReceipt] = useState("New Expenses");
   const [members, setMembers] = useState([]);
   const numOfMembers = members.length;
   const [numOfMembersChecked, setNumOfMembersChecked] = useState(numOfMembers);
   const [checkedMembers, setCheckedMembers] = useState([]);
+  const [isDisabled, setIsDisabled] = useState(false);
+  const [fileName, setFileName] = useState("");
+  const [receiptLoading, setReceiptLoading] = useState(false);
   //useEffect hook
   useEffect(
     function () {
@@ -18,6 +21,10 @@ function BillContextProvider({ children }) {
     },
     [numOfMembers, members]
   );
+  let membersBill;
+  if (numOfMembers > 0) {
+    membersBill = new Array(numOfMembers).fill(0);
+  }
   //Handler functions
   function totalAmount(amount) {
     setAmount(amount);
@@ -36,6 +43,9 @@ function BillContextProvider({ children }) {
   function handleSetChecked(checked) {
     setCheckedMembers(checked);
   }
+  function setFile(file) {
+    setFileName(file);
+  }
   return (
     <BillContext.Provider
       value={{
@@ -45,8 +55,8 @@ function BillContextProvider({ children }) {
         totalAmount,
         whoPaidBill,
         settingCurrency,
-        isReceipt,
-        setIsReceipt,
+        amountOrReceipt,
+        setAmountOrReceipt,
         members,
         setMembers,
         numOfMembers,
@@ -54,6 +64,13 @@ function BillContextProvider({ children }) {
         handleCheckedMembers,
         handleSetChecked,
         checkedMembers,
+        membersBill,
+        isDisabled,
+        setIsDisabled,
+        fileName,
+        setFile,
+        receiptLoading,
+        setReceiptLoading,
       }}
     >
       {children}

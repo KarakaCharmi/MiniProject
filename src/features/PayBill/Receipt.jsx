@@ -1,5 +1,6 @@
 import { createWorker } from "tesseract.js";
 import { useState, useEffect } from "react";
+import { useBillContext } from "./BillContextApi";
 
 function extractLastTotalAmount(text) {
   // Various regex patterns to match common total formats on receipts
@@ -60,42 +61,45 @@ function extractLastTotalAmount(text) {
 export default function Receipt() {
   const [totalAmount, setTotalAmount] = useState(null);
   const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-
+  const {
+    totalAmount: setAmount,
+    fileName,
+    setReceiptLoading,
+  } = useBillContext();
+  console.log("in receipt ", fileName);
+  useEffect(() => {
+    setAmount(totalAmount);
+    console.log("total amount in recipt", totalAmount);
+  }, [totalAmount]);
   useEffect(() => {
     async function processReceipt() {
+      setReceiptLoading(true);
       try {
         const worker = await createWorker("eng");
-        const ret = await worker.recognize("/receipt4.jpg");
+        const ret = await worker.recognize(`/${fileName}`);
         const text = ret.data.text;
         console.log("Extracted text:", text);
 
         const total = extractLastTotalAmount(text);
         if (total) {
-          console.log("Final total amount:", total);
+          //console.log("Final total amount:", total);
           setTotalAmount(total);
         } else {
-          console.log("Could not find total amount in the receipt");
+          //console.log("Could not find total amount in the receipt");
           setError("Could not find total amount");
         }
 
         await worker.terminate();
       } catch (err) {
-        console.error("Error processing receipt:", err);
+        //console.error("Error processing receipt:", err);
         setError("Error processing receipt: " + err.message);
       } finally {
-        setIsLoading(false);
+        setReceiptLoading(false);
       }
     }
 
     processReceipt();
   }, []);
 
-  return (
-    <div>
-      {isLoading && <p>Processing receipt...</p>}
-      {totalAmount && !isLoading && <p>Final Total: {totalAmount}</p>}
-      {error && !isLoading && <p>Error: {error}</p>}
-    </div>
-  );
+  return;
 }

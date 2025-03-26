@@ -14,18 +14,20 @@ export default function TotalSpent() {
     return acc + current.amount;
   }, 0);
   return (
-    <div className="bg-cyan-50 p-4 rounded-lg shadow-md mb-4">
-      <h2 className="text-gray-600 mb-2">Total spent</h2>
+    <div className="bg-[#deacsf] p-4 rounded-lg shadow-md mb-4 text-[#28014E]">
+      <h2 className=" mb-2 font-semibold tracking-wider text-lg">
+        Total spent
+      </h2>
       <div className="flex items-center justify-between">
         <div className="flex items-center">
-          <div className="bg-cyan-500 text-white rounded-full h-10 w-10 flex items-center justify-center">
+          <div className="bg-gradient-to-r from-[#9b3675] to-[#81346b] text-white rounded-full h-10 w-10 flex items-center justify-center">
             <i className="fas fa-dollar-sign"></i>
           </div>
           <div className="ml-4">
-            <h3 className="font-bold">Total money spent for {name}</h3>
+            <h3 className="tracking-wide">Total money spent for {name}</h3>
           </div>
         </div>
-        <p className="text-cyan-900 font-bold">₹{total}</p>
+        <p className="font-bold">₹{total}</p>
       </div>
     </div>
   );

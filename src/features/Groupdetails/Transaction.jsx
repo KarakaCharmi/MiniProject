@@ -10,16 +10,15 @@ export default function Transaction({ item }) {
   const { currency } = useBillContext();
   const formattedDateTime = format(date, "MMMM dd, yyyy h:mm a");
   return (
-    <div className="flex items-center justify-between py-4 px-3">
+    <div className="flex items-center justify-between py-4 px-3 shadow-md ">
       <div className="flex items-center">
-        {/* <div className="bg-cyan-400 text-white rounded-full h-14 w-14 flex items-center justify-center text-lg font-semibold">
-          {category[0].toUpperCase()}
-        </div> */}
         <div className="ml-4">
-          <h3 className="font-bold text-cyan-900">{category}</h3>
+          <h3 className="font-semibold text-[#28014E] tracking-wider capitalize">
+            {category}
+          </h3>
           <p className="text-gray-500 text-sm">{formattedDateTime}</p>
           <p className="text-gray-500 text-sm">
-            <span className="font-semibold">{paidBy}</span> paid for
+            <span className="font-semibold capitalize">{paidBy}</span> paid for
           </p>
         </div>
       </div>

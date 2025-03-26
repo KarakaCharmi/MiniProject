@@ -1,17 +1,49 @@
 import { useParams } from "react-router-dom";
 import { useAuth } from "../contextapi/UserAuth";
 import { useState } from "react";
+import { getDebts } from "../utils/getDebts";
 
 export default function GroupMembers() {
   const { groups, updateGroupMembers } = useAuth();
   const { id } = useParams();
   const group = groups.find((item) => item._id === id) || {};
-  //   const { members = [] } = group;
-  const balance = 100;
-  const totalPaid = 200;
-  const [members, setMembers] = useState(group.members || []);
+  const { members: groupMembers, transactions } = group;
+  /* const balance = 100;
+  const totalPaid = 200; */
+  const [members, setMembers] = useState(groupMembers || []);
   const [newMember, setNewMember] = useState("");
   const [message, setMessage] = useState("");
+
+  const debts = getDebts({ members: groupMembers, transactions });
+
+  const totalPaid = {};
+  const totalSpent = {};
+
+  members.forEach((member) => {
+    totalPaid[member] = 0;
+  });
+
+  transactions.forEach((transaction) => {
+    totalPaid[transaction.paidBy] += transaction.amount;
+  });
+
+  const balance = {};
+
+  groupMembers.forEach((member) => {
+    balance[member] = 0;
+  });
+
+  groupMembers.forEach((from) => {
+    groupMembers.forEach((to) => {
+      balance[from] += debts[to][from];
+      balance[from] -= debts[from][to]; //loan
+    });
+  });
+
+  groupMembers.forEach((member) => {
+    totalSpent[member] = totalPaid[member] - balance[member];
+  });
+
   function handleChange(e) {
     setNewMember(e.target.value);
   }
@@ -65,14 +97,14 @@ export default function GroupMembers() {
       <p className="text-gray-500 text-sm mb-4">
         Manage members, assign roles, and invite new users
       </p>
-
       <table className="w-full border-collapse">
         <thead>
           <tr className="bg-gray-100 text-gray-600">
             <th className="p-3 text-left">Name</th>
 
             <th className="p-3 text-left">Balance</th>
-            <th className="p-3 text-left">Total Paid</th>
+            <th className="p-3 text-left">Money Paid</th>
+            <th className="p-3 text-left">Money Spent</th>
           </tr>
         </thead>
         <tbody>
@@ -98,12 +130,14 @@ export default function GroupMembers() {
 
               <td
                 className={`p-3 ${
-                  balance < 0 ? "text-red-600" : "text-green-600"
+                  balance[member] < 0 ? "text-red-600" : "text-green-600"
                 }`}
               >
-                ₹{(balance ?? 0).toFixed(2)}
+                ₹{(balance[member] ?? 0).toFixed(2)}
               </td>
-              <td className="p-3">₹{(totalPaid ?? 0).toFixed(2)}</td>
+              <td className="p-3">₹{(totalPaid[member] ?? 0).toFixed(2)}</td>
+
+              <td className="p-3">₹{(totalSpent[member] ?? 0).toFixed(2)}</td>
             </tr>
           ))}
         </tbody>

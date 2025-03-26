@@ -18,9 +18,12 @@ export default function RecentActivity() {
   } else {
     recents = transactions.slice(-3);
   }
+  recents.reverse();
   return (
-    <div className="bg-cyan-50 p-4 rounded-lg shadow-md">
-      <h2 className="text-gray-600 mb-2">Recent activity</h2>
+    <div className="bg-[#deacsf] p-4 rounded-lg shadow-md">
+      <h2 className="text-[#28104E] font-semibold capitalize tracking-wider mb-4">
+        Recent activity
+      </h2>
       {recents.map((recent) => (
         <Recent recent={recent} key={recent.date} />
       ))}

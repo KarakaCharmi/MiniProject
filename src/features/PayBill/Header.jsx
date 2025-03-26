@@ -2,13 +2,13 @@ import { useBillContext } from "./BillContextApi";
 import CustomDropdown from "./CustomDrop";
 
 function Header() {
-  const { isReceipt, setIsReceipt } = useBillContext();
+  const { amountOrReceipt, setAmountOrReceipt } = useBillContext();
   return (
     <>
       <CustomDropdown
         options={["New Expenses", "New Expenses with Receipt"]}
-        value={isReceipt}
-        changeHandler={setIsReceipt}
+        value={amountOrReceipt}
+        changeHandler={setAmountOrReceipt}
       />
     </>
   );

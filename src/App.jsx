@@ -35,11 +35,10 @@ function App() {
           />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="groups" element={<Groups userEmail={user?.email} />} />
-
-          <Route path="groups/:id/newExpense" element={<AddingNewExpense />} />
         </Route>
         <Route path="explore/groups/:id" element={<GroupSideBar />}>
           <Route path="participants" element={<Participants />} />
+          <Route path="newExpense" element={<AddingNewExpense />} />
           <Route index path="*" element={<GroupCardInfo />} />
         </Route>
         <Route path="about" element={<About />} />

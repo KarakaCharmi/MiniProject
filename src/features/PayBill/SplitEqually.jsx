@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useBillContext } from "./BillContextApi";
 
-function Member({ member }) {
+function SplitEqually({ member }) {
   const {
     amount,
     numOfMembersChecked,
@@ -48,4 +48,4 @@ function Member({ member }) {
     </div>
   );
 }
-export default Member;
+export default SplitEqually;

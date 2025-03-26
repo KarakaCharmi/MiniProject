@@ -40,6 +40,7 @@ const groupSchema = new mongoose.Schema({
       date: { type: Date, default: Date.now },
       paidBy: { type: String, required: true },
       splitBetween: { type: [String], default: [] },
+      amountSplits: { type: [Number], default: [] },
     },
   ],
 });
@@ -149,7 +150,8 @@ app.delete("/groups/:id", async (req, res) => {
 app.post("/groups/:id/transactions", async (req, res) => {
   try {
     const { id } = req.params;
-    const { amount, category, date, paidBy, splitBetween } = req.body;
+    const { amount, category, date, paidBy, splitBetween, amountSplits } =
+      req.body;
 
     console.log(`📥 Adding transaction to group ID: ${id}`);
     console.log("📥 Transaction data:", req.body);
@@ -168,6 +170,7 @@ app.post("/groups/:id/transactions", async (req, res) => {
       date: date || new Date(),
       paidBy,
       splitBetween: splitBetween || [],
+      amountSplits: amountSplits || [],
     };
 
     const updatedGroup = await Group.findByIdAndUpdate(
