@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useBillContext } from "./BillContextApi";
 
-function Member({ member, index }) {
+function SplitManually({ member, index }) {
   const { amount, membersBill } = useBillContext();
   const [isDisabled, setIsDisabled] = useState(false);
   const [memberAmount, setMemberAmount] = useState("");
@@ -58,4 +58,4 @@ function Member({ member, index }) {
     </div>
   );
 }
-export default Member;
+export default SplitManually;

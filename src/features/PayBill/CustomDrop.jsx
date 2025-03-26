@@ -5,7 +5,6 @@ function CustomDropdown({ options, value, changeHandler }) {
   useEffect(function () {
     changeHandler(options[0]);
   }, []);
-
   return (
     <div className="relative  inline-block  w-full">
       {/* Dropdown Button */}

@@ -1,4 +1,4 @@
-import { HiArrowLeftCircle } from "react-icons/hi2";
+import { HiArrowLeftCircle, HiChevronDown } from "react-icons/hi2";
 import { useNavigate, useParams } from "react-router-dom";
 import Modal from "../../ui/Modal";
 import PayBill from "./PayBill";
@@ -10,8 +10,10 @@ import { toast } from "react-toastify";
 const API_URL = "http://localhost:5000";
 
 export default function AddingNewExpense() {
-  const { amount, whoPaid, checkedMembers, membersBill } = useBillContext();
+  const { amount, whoPaid, checkedMembers, membersBill, fileName } =
+    useBillContext();
   const [purpose, setPurpose] = useState("");
+  const [selectedOption, setSelectedOption] = useState("equally");
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -38,6 +40,10 @@ export default function AddingNewExpense() {
       console.error("API Error:", error);
     }
   }
+  const options = [
+    { value: "equally", label: "Split Equally" },
+    { value: "byAmounts", label: "Split by Amounts" },
+  ];
   return (
     <div className="bg-gray-100 min-h-screen  max-w-4xl m-auto my-5">
       <div className="bg-fuchsia-800 text-white p-4 flex items-center justify-between">
@@ -62,10 +68,6 @@ export default function AddingNewExpense() {
               type="text"
             />
           </div>
-          <button className="flex items-center text-blue-500">
-            <i className="fas fa-receipt text-blue-500"></i>
-            <span className="ml-2">ADD RECEIPT PHOTO</span>
-          </button>
         </div>
         <div className="bg-white p-4 rounded shadow mb-4">
           <label className="block text-gray-600 mb-2">Who paid</label>
@@ -76,7 +78,7 @@ export default function AddingNewExpense() {
               </div>
               <span className="ml-2">{whoPaid}</span>
             </div>
-            <span className="text-orange-500">{amount}</span>
+            <span className="text-orange-500">₹{amount}</span>
           </div>
           <Modal>
             <Modal.Open opens="editPaid">
@@ -87,8 +89,30 @@ export default function AddingNewExpense() {
             </Modal.Window>
           </Modal>
         </div>
-        <SplitBill />
-        <button className="text-blue-500 mb-4">SPLIT BY AMOUNTS</button>
+        <div className="bg-white p-4 rounded shadow mb-4">
+          <div className="flex items-center justify-between gap-10">
+            <div className="text-slate-700">SELECT SPLIT OPTION:</div>
+            <div className=" grow relative">
+              <select
+                value={selectedOption}
+                onChange={(e) => setSelectedOption(e.target.value)}
+                className="w-full px-4 py-2  pr-8 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none 
+                  appearance-none transition duration-150 ease-in-out "
+              >
+                {options.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute right-4 top-3 text-xl font-bold">
+                <HiChevronDown />
+              </div>
+            </div>
+          </div>
+        </div>
+        {selectedOption === "equally" && <SplitBill split="equally" />}
+        {selectedOption === "byAmounts" && <SplitBill split="byAmounts" />}
         <button
           className="bg-fuchsia-700 text-white w-full py-2 rounded"
           onClick={handleSaveTransaction}
