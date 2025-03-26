@@ -12,8 +12,14 @@ export function getDebts({ members, transactions }) {
 
   transactions.forEach((transaction) => {
     const to = transaction.paidBy;
-    transaction.splitBetween.forEach((from) => {
-      debts[from][to] += transaction.amount / transaction.splitBetween.length;
+    transaction.splitBetween.forEach((from, index) => {
+      if (
+        transaction.amountSplits.reduce((sum, amount) => sum + amount, 0) === 0
+      ) {
+        debts[from][to] += transaction.amount / transaction.splitBetween.length;
+      } else {
+        debts[from][to] += transaction.amountSplits[index];
+      }
     });
   });
 

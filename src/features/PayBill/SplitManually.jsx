@@ -6,6 +6,7 @@ function SplitManually({ member, index }) {
   const [isDisabled, setIsDisabled] = useState(false);
   const [memberAmount, setMemberAmount] = useState("");
   const [billSum, setBillSum] = useState(0);
+
   function handleAmountChange(e) {
     const a = e.target.value;
     const sumOfMembersBill = membersBill.reduce(

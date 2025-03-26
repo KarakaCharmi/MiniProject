@@ -10,8 +10,7 @@ import { toast } from "react-toastify";
 const API_URL = "http://localhost:5000";
 
 export default function AddingNewExpense() {
-  const { amount, whoPaid, checkedMembers, membersBill, fileName } =
-    useBillContext();
+  const { amount, whoPaid, checkedMembers, membersBill } = useBillContext();
   const [purpose, setPurpose] = useState("");
   const [selectedOption, setSelectedOption] = useState("equally");
   const navigate = useNavigate();
@@ -20,13 +19,25 @@ export default function AddingNewExpense() {
   //Event Handler
 
   async function handleSaveTransaction() {
-    console.log("memberbill", membersBill);
+    let eachMemberBill = membersBill.map((memberBill) => Number(memberBill));
+
+    let splitBetween = checkedMembers;
+
+    if (eachMemberBill.reduce((sum, bill) => sum + bill, 0) !== 0) {
+      splitBetween = splitBetween.filter(
+        (member, index) => eachMemberBill[index] !== 0
+      );
+
+      eachMemberBill = eachMemberBill.filter((bill) => bill !== 0);
+    }
     const newTransaction = {
       amount: amount,
       paidBy: whoPaid,
-      splitBetween: checkedMembers,
+      splitBetween,
       category: purpose,
+      amountSplits: eachMemberBill,
     };
+    console.log("amount splits", newTransaction.amountSplits);
 
     try {
       const response = await axios.post(

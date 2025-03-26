@@ -18,6 +18,7 @@ export default function RecentActivity() {
   } else {
     recents = transactions.slice(-3);
   }
+  recents.reverse();
   return (
     <div className="bg-[#deacsf] p-4 rounded-lg shadow-md">
       <h2 className="text-[#28104E] font-semibold capitalize tracking-wider mb-4">
