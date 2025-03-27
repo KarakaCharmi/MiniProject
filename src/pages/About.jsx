@@ -1,29 +1,28 @@
 import { useState } from "react";
-import Photo1 from "../images/Photo.jpg";
 const teamMembers = [
   {
-    name: "Alice",
-    role: "Frontend Developer",
-    img: Photo1,
+    name: "Bhagya",
+    role: "Project Manager",
+    img: "/bhagya.jpg",
   },
   {
-    name: "Bob",
+    name: "Charmi",
+    role: "Frontend Developer",
+    img: "/charmi.jpg",
+  },
+  {
+    name: "Dheekshitha",
     role: "Backend Developer",
-    img: "https://via.placeholder.com/150",
+    img: "/deek.jpg",
+  },
+  {
+    name: "Devi",
+    role: "UI/UX Designer",
+    img: "/devi.jpg",
   },
   {
     name: "Charlie",
     role: "ML Engineer",
-    img: "https://via.placeholder.com/150",
-  },
-  {
-    name: "David",
-    role: "UI/UX Designer",
-    img: "https://via.placeholder.com/150",
-  },
-  {
-    name: "Eve",
-    role: "Project Manager",
     img: "https://via.placeholder.com/150",
   },
 ];

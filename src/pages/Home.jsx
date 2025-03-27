@@ -1,9 +1,7 @@
-import Button from "../components/Button";
-import TravelImage from "../images/Trip-amico.png";
+import Button from "../ui/Button";
 import { Typewriter } from "react-simple-typewriter";
 // import Title from "../components/Navbar";
 import { useState } from "react";
-import Footer from "./Footer";
 import { Link } from "react-router-dom";
 
 const Home = () => {
@@ -43,7 +41,7 @@ const Home = () => {
               </div>
             </div>
             <img
-              src={TravelImage}
+              src="/Trip-amico.png"
               alt="Travel Illustration"
               className="w-full max-w-md mr-10 mt-10"
             />

@@ -1,7 +1,33 @@
-export default function Loader() {
+const Loader = () => {
   return (
-    <div className="font-bold h-screen flex justify-center items-center text-2xl">
-      Groups Loading....
-    </div>
+    <button
+      type="button"
+      className="bg-orange-500 text-white font-bold py-2 px-4 rounded flex items-center"
+      disabled
+    >
+      <svg
+        className="animate-spin h-5 w-5 mr-3 text-stone-200"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          className="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          strokeWidth="4"
+        ></circle>
+        <path
+          className="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8v8H4z"
+        ></path>
+      </svg>
+      Loading...
+    </button>
   );
-}
+};
+
+export default Loader;

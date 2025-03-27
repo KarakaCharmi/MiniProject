@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useBillContext } from "./BillContextApi";
+import { useBillContext } from "../../contextapi/BillContextApi";
 import SpinnerMini from "../../ui/MiniSpinner";
 
 const FileUpload = () => {

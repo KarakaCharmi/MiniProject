@@ -1,9 +1,9 @@
 import { useEffect, useReducer, useState } from "react";
 import "./GroupCard.css";
 import { Link } from "react-router-dom";
-import { useAuth } from "../contextapi/UserAuth";
+import { useAuth } from "../../contextapi/UserAuth";
 import { TrashIcon } from "@heroicons/react/24/solid";
-import { groupReducer, initialState } from "../utils/Groupreducer";
+import { groupReducer, initialState } from "../../utils/Groupreducer";
 
 const getRandomLightColor = () => {
   const hue = Math.floor(Math.random() * 360);

@@ -2,8 +2,8 @@ import { HiArrowLeftCircle, HiChevronDown } from "react-icons/hi2";
 import { useNavigate, useParams } from "react-router-dom";
 import Modal from "../../ui/Modal";
 import PayBill from "./PayBill";
-import SplitBill from "./SplitBill";
-import { useBillContext } from "./BillContextApi";
+import SplitBill from "../SplitBill/SplitBill";
+import { useBillContext } from "../../contextapi/BillContextApi";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -37,7 +37,6 @@ export default function AddingNewExpense() {
       category: purpose,
       amountSplits: eachMemberBill,
     };
-    console.log("amount splits", newTransaction.amountSplits);
 
     try {
       const response = await axios.post(
@@ -56,50 +55,67 @@ export default function AddingNewExpense() {
     { value: "byAmounts", label: "Split by Amounts" },
   ];
   return (
-    <div className="bg-gray-100 min-h-screen  max-w-4xl m-auto my-5">
-      <div className="bg-fuchsia-800 text-white p-4 flex items-center justify-between">
+    <div className="min-h-screen  max-w-4xl m-auto my-5 bg-[#deacsf] shadow-md">
+      <div className="bg-gradient-to-r from-[#29294f] via-[#3a3a6e] to-[#51518d] text-white p-6 rounded-lg shadow-lg flex items-center justify-between sticky top-0 z-10">
         <button
           onClick={() => navigate("/explore/groups")}
-          className="text-3xl font-bold"
+          className="text-3xl font-bold bg-gradient-to-r from-[#9b3675] to-[#81346b] rounded-full shadow-md"
         >
           <HiArrowLeftCircle />
         </button>
-        <h1 className="text-xl custom-font">New expense</h1>
+        <h1 className="text-xl tracking-wider custom-font ">New expense</h1>
       </div>
       <div className="p-4">
-        <div className="bg-white p-4 rounded shadow mb-4">
-          <label className="block text-gray-600 mb-2">Purpose</label>
-          <div className="flex items-center mb-4">
-            <i className="fas fa-ban text-gray-400"></i>
+        <div className="bg-white p-4 rounded mt-4 flex">
+          <label className="block text-slate-950  tracking-wide basis-32 ">
+            Purpose
+          </label>
+          <div className="grow mb-4 ">
             <input
-              className="ml-2 flex-1 border-b border-gray-300 focus:outline-none"
-              placeholder="e.g. Peanut butter"
+              className="ml-2 flex-1 border-b border-gray-300 focus:outline-none w-full tracking-wider text-slate-800"
+              placeholder="Example: Peanut butter"
               value={purpose}
               onChange={(e) => setPurpose(e.target.value)}
               type="text"
             />
           </div>
         </div>
-        <div className="bg-white p-4 rounded shadow mb-4">
-          <label className="block text-gray-600 mb-2">Who paid</label>
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center">
-              <div className="w-10 h-10 rounded-full bg-purple-500 text-white flex items-center justify-center">
-                I
-              </div>
-              <span className="ml-2">{whoPaid}</span>
-            </div>
-            <span className="text-orange-500">₹{amount}</span>
+        <div></div>
+        <div className="bg-white p-4 rounded  flex items-center">
+          <label className="block text-slate-950  basis-32 tracking-wider">
+            Paid By
+          </label>
+          <div className="tracking-wider capitalize p-2 text-slate-800 ">
+            <input
+              className="ml-2 flex-1 border-b border-gray-300 focus:outline-none  tracking-widest text-slate-800 capitalize"
+              value={whoPaid}
+              disabled
+              type="text"
+            />
           </div>
-          <Modal>
-            <Modal.Open opens="editPaid">
-              <button className="text-blue-500">EDIT</button>
-            </Modal.Open>
-            <Modal.Window name="editPaid">
-              <PayBill />
-            </Modal.Window>
-          </Modal>
         </div>
+
+        <div className="bg-white p-4 rounded mb-4 flex items-center">
+          <label className="block text-slate-950 mb-2  basis-32 tracking-wider">
+            Amount
+          </label>
+          <div className="mb-4 tracking-wider capitalize p-2 text-slate-800 ">
+            <input
+              className="ml-2 flex-1 border-b border-gray-300 focus:outline-none  tracking-widest text-slate-800 capitalize"
+              value={amount}
+              disabled
+              type="Number"
+            />
+          </div>
+        </div>
+        <Modal>
+          <Modal.Open opens="editPaid">
+            <button className="text-blue-500">EDIT</button>
+          </Modal.Open>
+          <Modal.Window name="editPaid">
+            <PayBill />
+          </Modal.Window>
+        </Modal>
         <div className="bg-white p-4 rounded shadow mb-4">
           <div className="flex items-center justify-between gap-10">
             <div className="text-slate-700">SELECT SPLIT OPTION:</div>

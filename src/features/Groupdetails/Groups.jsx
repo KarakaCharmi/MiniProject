@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import GroupCard from "./GroupCard";
 import axios from "axios";
-import { useAuth } from "../contextapi/UserAuth";
-import Loader from "../components/Loader";
+import { useAuth } from "../../contextapi/UserAuth";
+import Loader from "../../ui/Loader";
 // Function to generate a random light color
 const getRandomLightColor = () => {
   const hue = Math.floor(Math.random() * 360);

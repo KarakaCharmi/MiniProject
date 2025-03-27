@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useBillContext } from "./BillContextApi";
+import { useBillContext } from "../../contextapi/BillContextApi";
 
 function SplitManually({ member, index }) {
   const { amount, membersBill } = useBillContext();

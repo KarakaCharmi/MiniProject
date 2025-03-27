@@ -104,6 +104,28 @@ app.get("/groups", async (req, res) => {
     const userGroups = await Group.find({ createdBy: email });
     console.log(`📤 Found ${userGroups.length} groups for ${email}`);
     res.json(userGroups);
+    console.log(userGroups);
+  } catch (error) {
+    console.error("❌ Error fetching user's groups:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+app.get("/groups/:id", async (req, res) => {
+  const { id } = req.params;
+  console.log("id", id);
+  const email = req.query.email?.trim();
+
+  if (!email) {
+    console.error("❌ No email provided in request.");
+    return res.status(400).json({ error: "User email is required" });
+  }
+  console.log(`📥 Fetching groups for: ${email}`);
+
+  try {
+    const userGroups = await Group.find({ createdBy: email });
+    const groupRequired = userGroups.find((group) => group._id === id);
+    res.json(groupRequired);
+    console.log("group required", groupRequired);
   } catch (error) {
     console.error("❌ Error fetching user's groups:", error);
     res.status(500).json({ error: "Internal server error" });

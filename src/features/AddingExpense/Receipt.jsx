@@ -1,6 +1,6 @@
 import { createWorker } from "tesseract.js";
 import { useState, useEffect } from "react";
-import { useBillContext } from "./BillContextApi";
+import { useBillContext } from "../../contextapi/BillContextApi";
 
 function extractLastTotalAmount(text) {
   // Various regex patterns to match common total formats on receipts
