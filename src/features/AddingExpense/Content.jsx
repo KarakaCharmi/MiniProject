@@ -6,6 +6,7 @@ import FileUpload from "./FileUpload";
 import useReceipt from "./Receipt";
 import { set } from "mongoose";
 import Receipt from "./Receipt";
+import { HiArrowRight } from "react-icons/hi2";
 function Content() {
   const {
     amount,
@@ -74,14 +75,15 @@ function Content() {
           {fileName !== "" && <Receipt />}
         </>
       )}
-      <button
-        className={`bg-purple-400 text-white text-center p-4 text-xl mt-10 rounded-b-xl flex gap-4 justify-center cursor-pointer w-full disabled:cursor-not-allowed`}
-        onClick={handleClick}
-        disabled={receiptLoading}
-      >
-        <span className="tracking-widest text-2xl">NEXT</span>
-        <i className="fas fa-arrow-right text-2xl"></i>
-      </button>
+      <div className="mt-4">
+        <button
+          className="px-4 py-2  rounded-full bg-purple-600 text-white shadow-md tracking-widest font-medium text-md flex gap-3 items-center ml-auto"
+          onClick={handleClick}
+          disabled={receiptLoading}
+        >
+          <span>Next</span> <HiArrowRight />
+        </button>
+      </div>
     </div>
   );
 }
