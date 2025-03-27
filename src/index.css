@@ -1,6 +1,12 @@
+@import url("https://fonts.googleapis.com/css?family=Audiowide");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.font-handwriting {
+  font-family: "Audiowide", cursive;
+}
+
 /* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

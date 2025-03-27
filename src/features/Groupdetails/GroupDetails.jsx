@@ -11,6 +11,8 @@ import { useEffect } from "react";
 import { useAuth } from "../../contextapi/UserAuth";
 import { useParams } from "react-router-dom";
 
+import { GlobeAltIcon } from "@heroicons/react/24/solid";
+
 export default function GroupDetails() {
   const { id } = useParams();
   const { groups } = useAuth();
@@ -35,33 +37,41 @@ export default function GroupDetails() {
   }, [members, setMembers]);
 
   return (
-    <div className="max-w-5xl mx-auto my-8">
+    <div className="max-w-5xl mx-auto my-2">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#29294f] via-[#3a3a6e] to-[#51518d] text-white p-6 rounded-lg shadow-lg flex justify-between items-center sticky top-0 z-10">
+      <div className="bg-[#9A7DCE] backdrop-blur-3xl bg-opacity-70 text-white p-6 rounded-lg shadow-lg flex justify-between items-center sticky top-0 z-50">
         {/* Group Info */}
-        <div className="flex items-center gap-4 ">
-          <div className="bg-gradient-to-r from-[#9b3675] to-[#81346b] p-3 rounded-full shadow-md">
-            <IoMdPeople className="text-3xl text-white" />
+        <div className="flex items-center gap-4">
+          <div className="bg-white  border-zinc-600 border-2 p-2 rounded-full shadow-md">
+            <img
+              src="https://img.icons8.com/?size=100&id=40730&format=png&color=000000"
+              alt="Travel Icon"
+              className="w-8 h-8"
+            />
           </div>
+
           <div>
-            <h1 className="text-2xl font-bold tracking-wide">{name}</h1>
-            <p className="text-lg italic opacity-80">&mdash; {description}</p>
+            <h1 className="text-3xl font-bold text-[#eb5f76]/80 drop-shadow-[0_0_5px_#] ">
+              {name}
+            </h1>
+
+            <p className="text-lg italic font-[cursive] font-bold   text-[#090a0a]">
+              &mdash; {description}
+            </p>
           </div>
         </div>
 
-        {/* Member Count Badge */}
-
         {/* Actions */}
-        <div className="flex items-center gap-3 ">
+        <div className="flex items-center gap-3">
           <div className="px-5 py-2 bg-white/10 backdrop-blur-md text-white font-bold text-lg rounded-full shadow-lg flex items-center gap-2 border border-white/20">
             <IoMdPeople className="text-xl text-white" />
             <span>{members.length} Members</span>
           </div>
 
-          <button className="bg-white/10 px-4 py-2 rounded-full shadow-md hover:bg-white/20 transition">
+          <button className="bg-[#FFFFFF1A] px-4 py-2 rounded-full shadow-md hover:bg-[#FFFFFF33] transition">
             <FiEdit className="text-lg" />
           </button>
-          <button className="bg-white/10 px-4 py-2 rounded-full shadow-md hover:bg-white/20 transition">
+          <button className="bg-[#FFFFFF1A] px-4 py-2 rounded-full shadow-md hover:bg-[#FFFFFF33] transition">
             <FiShare2 className="text-lg" />
           </button>
         </div>
