@@ -32,11 +32,11 @@ function SplitManually({ member, index }) {
   }
   return (
     <div className="flex items-center mb-2">
-      <div className="flex items-center grow">
-        <div className="w-10 h-10 rounded-full bg-gray-400 text-white flex items-center justify-center">
+      <div className="flex items-center grow gap-4">
+        <div className="shadow-md w-10 h-10 rounded-full bg-gradient-to-r from-[#9b3675] to-[#81346b] text-white flex items-center justify-center">
           {member[0].toUpperCase()}
         </div>
-        <span className="ml-2">
+        <span className="ml-2 text-[#28104E] tracking-wider">
           {member
             .split(" ")
             .map((word) => word.charAt(0).toUpperCase() + word.slice(1))

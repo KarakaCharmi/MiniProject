@@ -10,9 +10,9 @@ import { toast } from "react-toastify";
 const API_URL = "http://localhost:5000";
 
 export default function AddingNewExpense() {
-  const { amount, whoPaid, checkedMembers, membersBill } = useBillContext();
-  const [purpose, setPurpose] = useState("");
-  const [selectedOption, setSelectedOption] = useState("equally");
+  const { amount, whoPaid, checkedMembers, membersBill, purpose } =
+    useBillContext();
+
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -55,97 +55,86 @@ export default function AddingNewExpense() {
     { value: "byAmounts", label: "Split by Amounts" },
   ];
   return (
-    <div className="min-h-screen  max-w-4xl m-auto my-5 bg-[#deacsf] shadow-md">
-      <div className="bg-gradient-to-r from-[#29294f] via-[#3a3a6e] to-[#51518d] text-white p-6 rounded-lg shadow-lg flex items-center justify-between sticky top-0 z-10">
+    <div className="min-h-screen  max-w-4xl m-auto my-5 bg-[#deacsf]  text-[#28104E]">
+      <div className="bg-gradient-to-r from-[#29294f] via-[#3a3a6e] to-[#51518d] text-white p-4  rounded-lg shadow-lg flex items-center justify-between sticky top-0 z-10 ">
         <button
           onClick={() => navigate(`/explore/groups/${id}`)}
           className="text-3xl font-bold bg-gradient-to-r from-[#9b3675] to-[#81346b] rounded-full shadow-md"
         >
           <HiArrowLeftCircle />
         </button>
-        <h1 className="text-xl tracking-wider custom-font ">New expense</h1>
+        <h1 className="text-lg tracking-widest custom-font px-4 py-2 rounded-full bg-gradient-to-r from-[#9b3675] to-[#81346b] shadow-md">
+          {purpose} Expenses
+        </h1>
       </div>
-      <div className="p-4">
-        <div className="bg-white p-4 rounded mt-4 flex">
-          <label className="block text-slate-950  tracking-wide basis-32 ">
-            Purpose
-          </label>
-          <div className="grow mb-4 ">
-            <input
-              className="ml-2 flex-1 border-b border-gray-300 focus:outline-none w-full tracking-wider text-slate-800"
-              placeholder="Example: Peanut butter"
-              value={purpose}
-              onChange={(e) => setPurpose(e.target.value)}
-              type="text"
-            />
+      <div className="mt-10 ">
+        <div className="border-b-purple-200 border-b-solid border-b-2 shadow-md pb-4 rounded-md pl-8">
+          <div className="tracking-widest text-[#28104E] mb-6 pl-4 font-semibold text-lg">
+            Details
           </div>
-        </div>
-        <div></div>
-        <div className="bg-white p-4 rounded  flex items-center">
-          <label className="block text-slate-950  basis-32 tracking-wider">
-            Paid By
-          </label>
-          <div className="tracking-wider capitalize p-2 text-slate-800 ">
-            <input
-              className="ml-2 flex-1 border-b border-gray-300 focus:outline-none  tracking-widest text-slate-800 capitalize"
-              value={whoPaid}
-              disabled
-              type="text"
-            />
+          <div className="bg-white px-4 rounded  flex">
+            <label className="block tracking-wide basis-32 ">Purpose</label>
+            <div className="grow ">
+              <input
+                className="ml-2 flex-1 border-b capitalize font-medium text-slate-500 border-gray-300 focus:outline-none w-full tracking-wider "
+                value={purpose}
+                disabled
+                type="text"
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="bg-white p-4 rounded mb-4 flex items-center">
-          <label className="block text-slate-950 mb-2  basis-32 tracking-wider">
-            Amount
-          </label>
-          <div className="mb-4 tracking-wider capitalize p-2 text-slate-800 ">
-            <input
-              className="ml-2 flex-1 border-b border-gray-300 focus:outline-none  tracking-widest text-slate-800 capitalize"
-              value={amount}
-              disabled
-              type="Number"
-            />
-          </div>
-        </div>
-        <Modal>
-          <Modal.Open opens="editPaid">
-            <button className="text-blue-500">EDIT</button>
-          </Modal.Open>
-          <Modal.Window name="editPaid">
-            <PayBill />
-          </Modal.Window>
-        </Modal>
-        <div className="bg-white p-4 rounded shadow mb-4">
-          <div className="flex items-center justify-between gap-10">
-            <div className="text-slate-700">SELECT SPLIT OPTION:</div>
-            <div className=" grow relative">
-              <select
-                value={selectedOption}
-                onChange={(e) => setSelectedOption(e.target.value)}
-                className="w-full px-4 py-2  pr-8 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none 
-                  appearance-none transition duration-150 ease-in-out "
-              >
-                {options.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              <div className="absolute right-4 top-3 text-xl font-bold">
-                <HiChevronDown />
+          <div className="flex mt-7">
+            <div className="bg-white px-4 rounded  flex items-center  grow">
+              <label className="block   basis-32 tracking-wider">Paid By</label>
+              <div className="tracking-wider capitalize text-slate-800 ">
+                <input
+                  className="ml-2 flex-1 border-b border-gray-300 focus:outline-none  tracking-widest text-slate-500 capitalize font-medium"
+                  value={whoPaid}
+                  disabled
+                  type="text"
+                />
+              </div>
+            </div>
+
+            <div className="bg-white  rounded flex items-center grow">
+              <label className="block  basis-32 tracking-wider">Amount</label>
+              <div className="tracking-wider capitalize text-slate-800 ">
+                <input
+                  className="ml-2 flex-1 border-b font-medium border-gray-300 focus:outline-none  tracking-widest text-slate-500 capitalize"
+                  value={amount}
+                  disabled
+                  type="Number"
+                />
               </div>
             </div>
           </div>
+
+          <Modal>
+            <Modal.Open opens="editPaid">
+              <button className="text-white bg-gradient-to-r from-[#9b3675] to-[#81346b] font-semibold tracking-widest ml-4 mt-6 border px-4 py-1 rounded-full shadow-md">
+                EDIT
+              </button>
+            </Modal.Open>
+            <Modal.Window name="editPaid">
+              <PayBill />
+            </Modal.Window>
+          </Modal>
         </div>
-        {selectedOption === "equally" && <SplitBill split="equally" />}
-        {selectedOption === "byAmounts" && <SplitBill split="byAmounts" />}
-        <button
-          className="bg-fuchsia-700 text-white w-full py-2 rounded"
-          onClick={handleSaveTransaction}
-        >
-          SAVE
-        </button>
+        <div className="bg-white px-6 rounded mb-4 shadow-md mt-6">
+          <div className="text-[#28104E] text-lg tracking-widest font-semibold pl-4  ">
+            Split the Expenses
+          </div>
+          <SplitBill />
+        </div>
+        <div className="text-right mb-4 mt-4">
+          <button
+            className="bg-gradient-to-r from-[#9b3675] to-[#81346b] text-white py-1 px-4 rounded-full tracking-widest mb-6"
+            onClick={handleSaveTransaction}
+          >
+            SAVE
+          </button>
+        </div>
       </div>
     </div>
   );
