@@ -9,7 +9,6 @@ export default function TotalSpent() {
   //finding Group with id
 
   const { name, transactions } = groups.find((group) => group._id === id);
-  console.log(transactions);
   const total = transactions.reduce((acc, current) => {
     return acc + current.amount;
   }, 0);

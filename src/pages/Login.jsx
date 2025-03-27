@@ -1,8 +1,7 @@
 import { useState } from "react";
 import Form from "./Form";
-import loginImage from "../images/Login-bro.png";
-import SignUpImage from "../images/Signup-rafiki.png";
-import Navbar from "../components/Navbar";
+
+import Navbar from "../ui/Navbar";
 import { useAuth } from "../contextapi/UserAuth";
 const Login = () => {
   const [isActive, setIsActive] = useState(false);
@@ -29,7 +28,7 @@ const Login = () => {
                 isActive ? "-left-1/2 delay-[1.2s]" : ""
               }`}
               style={{
-                backgroundImage: `url(${loginImage})`, // Replace with your image variable
+                backgroundImage: `url(/Login-bro.png)`, // Replace with your image variable
                 backgroundPosition: "center",
                 backgroundSize: "cover",
                 backgroundRepeat: "no-repeat",
@@ -53,7 +52,7 @@ const Login = () => {
                 isActive ? "left-1/2 delay-[0.6s]" : ""
               }`}
               style={{
-                backgroundImage: `url(${SignUpImage})`,
+                backgroundImage: `url(/ignup-rafiki.png)`,
                 backgroundPosition: "center",
                 backgroundSize: "cover",
                 backgroundRepeat: "no-repeat",

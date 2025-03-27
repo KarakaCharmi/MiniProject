@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import CustomDropdown from "./CustomDrop";
 import CustomDrop from "./CustomDrop";
-import { useBillContext } from "./BillContextApi";
+import { useBillContext } from "../../contextapi/BillContextApi";
 import FileUpload from "./FileUpload";
 import useReceipt from "./Receipt";
 import { set } from "mongoose";
@@ -45,7 +45,7 @@ function Content() {
         <div className="flex p-4 mt-5 gap-4 items-center">
           <label
             htmlFor="amount"
-            className="min-w-[6.5rem] text-gray-700 font-medium "
+            className="min-w-[8rem] text-gray-700 font-medium "
           >
             Paid Amount:
           </label>

@@ -1,4 +1,4 @@
-import { useBillContext } from "./BillContextApi";
+import { useBillContext } from "../../contextapi/BillContextApi";
 import SplitEqually from "./SplitEqually";
 import SplitManually from "./SplitManually";
 

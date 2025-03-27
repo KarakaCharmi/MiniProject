@@ -9,12 +9,12 @@ import { useAuth } from "./contextapi/UserAuth";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Dashboard from "./pages/Dashboard";
-import Groups from "./pages/Groups";
+import Groups from "./features/Groupdetails/Groups";
 import CreateGroup from "./pages/CreateGroup";
-import GroupCardInfo from "./pages/GroupCardInfo";
-import AddingNewExpense from "./features/PayBill/AddingNewExpense";
+import GroupCardInfo from "./features/Groupdetails/GroupCardInfo";
+import AddingNewExpense from "./features/AddingExpense/AddingNewExpense";
 import AppLayout from "./AppLayout";
-import GroupSideBar from "./pages/GroupSideBar";
+import GroupSideBar from "./features/Groupdetails/GroupSideBar";
 import Participants from "./SideNavBarFeatures/Participants";
 function App() {
   const { user } = useAuth();

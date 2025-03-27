@@ -1,17 +1,15 @@
 import { useState } from "react";
-import { useBillContext } from "./BillContextApi";
+import { useBillContext } from "../../contextapi/BillContextApi";
 
 function SplitEqually({ member }) {
   const {
     amount,
     numOfMembersChecked,
     handleCheckedMembers,
-    numOfMembers,
     handleSetChecked,
     checkedMembers,
   } = useBillContext();
   const [isChecked, setIsChecked] = useState(true);
-  console.log("checking", numOfMembers, numOfMembersChecked);
   function handleChange(e) {
     setIsChecked((isChecked) => !isChecked);
     if (!e.target.checked) {
