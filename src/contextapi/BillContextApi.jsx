@@ -13,6 +13,7 @@ function BillContextProvider({ children }) {
   const [isDisabled, setIsDisabled] = useState(false);
   const [fileName, setFileName] = useState("");
   const [receiptLoading, setReceiptLoading] = useState(false);
+  const [purpose, setPurpose] = useState("");
   //useEffect hook
   useEffect(
     function () {
@@ -57,6 +58,8 @@ function BillContextProvider({ children }) {
         settingCurrency,
         amountOrReceipt,
         setAmountOrReceipt,
+        purpose,
+        setPurpose,
         members,
         setMembers,
         numOfMembers,
