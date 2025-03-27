@@ -58,7 +58,7 @@ export default function AddingNewExpense() {
     <div className="min-h-screen  max-w-4xl m-auto my-5 bg-[#deacsf]  text-[#28104E]">
       <div className="bg-gradient-to-r from-[#29294f] via-[#3a3a6e] to-[#51518d] text-white p-4  rounded-lg shadow-lg flex items-center justify-between sticky top-0 z-10 ">
         <button
-          onClick={() => navigate("/explore/groups")}
+          onClick={() => navigate(`/explore/groups/${id}`)}
           className="text-3xl font-bold bg-gradient-to-r from-[#9b3675] to-[#81346b] rounded-full shadow-md"
         >
           <HiArrowLeftCircle />
