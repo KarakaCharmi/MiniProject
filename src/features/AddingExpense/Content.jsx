@@ -9,11 +9,11 @@ import Receipt from "./Receipt";
 function Content() {
   const {
     amount,
+    purpose,
+    setPurpose,
     totalAmount,
     whoPaid,
     whoPaidBill,
-    currency,
-    settingCurrency,
     members,
     amountOrReceipt,
     fileName,
@@ -28,9 +28,21 @@ function Content() {
     navigate("newExpense");
   }
   return (
-    <div className="rounded-xl relative">
-      <div className="flex items-center p-4 mt-5 rounded-md gap-4">
-        <div className="min-w-[6.5rem] text-gray-700 font-medium">
+    <div className="rounded-xl relative mt-2">
+      <div className="flex items-center p-4 mt-2 gap-4">
+        <div className="min-w-[6.8rem] text-gray-700 font-medium">Purpose</div>
+        <div className="grow">
+          <input
+            type="text"
+            className="px-2 py-1 w-full outline-1 outline-purple-400 rounded-lg border-1 border border-purple-300 "
+            value={purpose}
+            onChange={(e) => setPurpose(e.target.value)}
+            placeholder="Example: Peanut butter"
+          />
+        </div>
+      </div>
+      <div className="flex items-center p-4 mt-2 rounded-md gap-4">
+        <div className="min-w-[6.8rem] text-gray-700 font-medium">
           Who paid??
         </div>
         <div className="grow">
@@ -42,10 +54,10 @@ function Content() {
         </div>
       </div>
       {amountOrReceipt === "New Expenses" ? (
-        <div className="flex p-4 mt-5 gap-4 items-center">
+        <div className="flex p-4 mt-2 gap-4 items-center">
           <label
             htmlFor="amount"
-            className="min-w-[8rem] text-gray-700 font-medium "
+            className="min-w-[6.8rem] text-gray-700 font-medium "
           >
             Paid Amount:
           </label>
@@ -53,13 +65,7 @@ function Content() {
             value={amount}
             onChange={(e) => totalAmount(e.target.value)}
             id="amount"
-            className="px-4 py-2 ml-2 border-purple-300 border-solid border-[3px] rounded-xl outline-purple-300 bg-purple-100
-        "
-          />
-          <CustomDropdown
-            options={["INR", "USD", "END"]}
-            value={currency}
-            changeHandler={settingCurrency}
+            className="px-2 py-1 w-full outline-1 outline-purple-400 rounded-lg border border-purple-300 border-1 "
           />
         </div>
       ) : (
