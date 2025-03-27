@@ -6,7 +6,7 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./contextapi/UserAuth.jsx";
 import { GroupsContextProvider } from "./contextapi/GroupsContext.jsx";
 import { BillContextProvider } from "./contextapi/BillContextApi.jsx";
-
+// import Modal from "./ui/Modal";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
