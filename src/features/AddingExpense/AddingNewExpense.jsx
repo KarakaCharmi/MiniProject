@@ -44,7 +44,9 @@ export default function AddingNewExpense() {
         newTransaction
       );
       toast.success("Expense added successfully!", { autoClose: 1000 });
-      setTimeout(() => navigate("/explore/groups"), 1000);
+      setTimeout(() => {
+        navigate(`/explore/groups/${id}`);
+      }, 1000);
     } catch (error) {
       toast.error("Error in adding expense, Please try again.");
       console.error("API Error:", error);

@@ -44,7 +44,7 @@ const GroupSideBar = () => {
           </NavLink>
 
           <NavLink
-            to="reports"
+            to="statistics"
             className={({ isActive }) =>
               `p-3  rounded-xl flex justify-center  transition duration-200 ${
                 isActive ? style1 : style2

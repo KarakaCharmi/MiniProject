@@ -99,13 +99,13 @@ export default function GroupMembers() {
       <h2 className="text-2xl font-semibold text-gray-800 mb-2">
         Group Members
       </h2>
-      <p className="text-gray-500 text-sm mb-4">
+      <p className="text-teal-500  font-sans text-sm mb-4">
         Manage members, assign roles, and invite new users
       </p>
 
       <table className="w-full border-collapse rounded-md overflow-hidden shadow-sm">
         <thead>
-          <tr className="bg-gray-100 text-gray-700 text-sm uppercase">
+          <tr className="bg-gray-200 text-gray-700 text-sm uppercase">
             <th className="p-3 text-left">Name</th>
             <th className="p-3 text-left">Balance</th>
             <th className="p-3 text-left">Money Paid</th>
@@ -144,6 +144,7 @@ export default function GroupMembers() {
                 }`}
               >
                 <span
+                  style={{ fontFamily: "IBM Plex Mono, monospace" }}
                   className={`px-2 py-1 rounded-md ${
                     balance[member] < 0 ? "bg-red-100" : "bg-green-100"
                   }`}
@@ -151,10 +152,16 @@ export default function GroupMembers() {
                   ₹{(balance[member] ?? 0).toFixed(2)}
                 </span>
               </td>
-              <td className="p-3 text-gray-700 font-bold">
+              <td
+                className="p-3 text-gray-700 "
+                style={{ fontFamily: "IBM Plex Mono, monospace" }}
+              >
                 ₹{(totalPaid[member] ?? 0).toFixed(2)}
               </td>
-              <td className="p-3 text-gray-700">
+              <td
+                className="p-3 text-gray-700"
+                style={{ fontFamily: "IBM Plex Mono, monospace" }}
+              >
                 ₹{(totalSpent[member] ?? 0).toFixed(2)}
               </td>
             </tr>
