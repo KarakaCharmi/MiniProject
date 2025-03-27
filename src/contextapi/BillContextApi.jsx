@@ -14,6 +14,7 @@ function BillContextProvider({ children }) {
   const [fileName, setFileName] = useState("");
   const [receiptLoading, setReceiptLoading] = useState(false);
   const [purpose, setPurpose] = useState("");
+  const [transactions, setTransactions] = useState([]); // Store transactions
   //useEffect hook
   useEffect(
     function () {
@@ -47,6 +48,17 @@ function BillContextProvider({ children }) {
   function setFile(file) {
     setFileName(file);
   }
+  function addTransactions(category, amount, paidBy, splitBetween) {
+    const newTransaction = {
+      category,
+      amount,
+      paidBy,
+      splitBetween,
+      date: new Date(), // Add timestamp
+    };
+    setTransactions([...transactions, newTransaction]);
+  }
+
   return (
     <BillContext.Provider
       value={{
@@ -74,6 +86,9 @@ function BillContextProvider({ children }) {
         setFile,
         receiptLoading,
         setReceiptLoading,
+        setTransactions,
+        addTransactions,
+        transactions,
       }}
     >
       {children}

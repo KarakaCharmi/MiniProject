@@ -13,7 +13,7 @@ export default function CreateGroup() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [memberInput, setMemberInput] = useState("");
-
+  const [mailInput, setMailInput] = useState("");
   // ✅ Ensure createdBy is always updated
   const [state, dispatch] = useReducer(groupReducer, {
     ...initialState,
@@ -31,11 +31,23 @@ export default function CreateGroup() {
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      dispatch({
-        type: "ADD_MEMBER",
-        email: memberInput.trim().toLowerCase(),
-      });
-      setMemberInput("");
+
+      if (memberInput.trim() && mailInput.trim()) {
+        // Combine name and email in the format: Name (Email)
+        const member = `${memberInput.trim()} (${mailInput
+          .trim()
+          .toLowerCase()})`;
+
+        // Dispatch the action with member information
+        dispatch({
+          type: "ADD_MEMBER",
+          email: member,
+        });
+
+        // Clear inputs
+        setMemberInput("");
+        setMailInput("");
+      }
     }
   };
 
@@ -119,13 +131,32 @@ export default function CreateGroup() {
                 </button>
               </span>
             ))}
-            <input
+          </div>
+          {/* <input
               type="text"
               placeholder="Add Member (Name)"
               value={memberInput}
               onChange={(e) => setMemberInput(e.target.value)}
               onKeyDown={handleKeyDown}
               className="input-field member-input"
+            /> */}
+          <div className="flex  flex-rows-[auto_1fr ] gap-2 mt-2">
+            <input
+              type="text"
+              placeholder="Name"
+              value={memberInput}
+              onChange={(e) => setMemberInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              className="border-2  p-2 rounded-lg"
+            />
+
+            <input
+              type="email"
+              placeholder="Email"
+              value={mailInput}
+              onChange={(e) => setMailInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              className="border-2 w-[400px] ml-4 rounded-lg"
             />
           </div>
         </div>

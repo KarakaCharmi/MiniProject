@@ -11,8 +11,6 @@ import { useEffect } from "react";
 import { useAuth } from "../../contextapi/UserAuth";
 import { useParams } from "react-router-dom";
 
-import { GlobeAltIcon } from "@heroicons/react/24/solid";
-
 export default function GroupDetails() {
   const { id } = useParams();
   const { groups } = useAuth();

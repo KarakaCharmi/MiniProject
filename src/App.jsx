@@ -16,6 +16,7 @@ import AddingNewExpense from "./features/AddingExpense/AddingNewExpense";
 import AppLayout from "./AppLayout";
 import GroupSideBar from "./features/Groupdetails/GroupSideBar";
 import Participants from "./SideNavBarFeatures/Participants";
+import Statistics from "./SideNavBarFeatures/Statistics";
 function App() {
   const { user } = useAuth();
   return (
@@ -38,6 +39,7 @@ function App() {
         </Route>
         <Route path="explore/groups/:id" element={<GroupSideBar />}>
           <Route path="participants" element={<Participants />} />
+          <Route path="statistics" element={<Statistics />} />
           <Route path="newExpense" element={<AddingNewExpense />} />
           <Route index path="*" element={<GroupCardInfo />} />
         </Route>

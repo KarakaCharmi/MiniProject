@@ -12,7 +12,7 @@ function CustomDropdown({ options, value, changeHandler }) {
         onClick={() => setIsOpen(!isOpen)}
         className=" text-black border-none  shadow-lg px-4 py-3 cursor-pointer flex justify-between items-center text-center bg-purple-100"
       >
-        <span className="capitalize">{value}</span>
+        <span>{value}</span>
         <i className="fas fa-caret-down"></i>
       </div>
 
@@ -23,7 +23,7 @@ function CustomDropdown({ options, value, changeHandler }) {
             <li
               key={index}
               className="px-4 py-2 cursor-pointer hover:b
-              g-purple-100 rounded-md transition-all duration-200 bg-purple-50 capitalize"
+              g-purple-100 rounded-md transition-all duration-200 bg-purple-50 "
               onClick={() => {
                 changeHandler(option);
                 setIsOpen(false);
