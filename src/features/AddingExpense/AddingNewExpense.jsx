@@ -57,10 +57,7 @@ export default function AddingNewExpense() {
       console.error("API Error:", error);
     }
   }
-  const options = [
-    { value: "equally", label: "Split Equally" },
-    { value: "byAmounts", label: "Split by Amounts" },
-  ];
+
   return (
     <div className="min-h-screen  max-w-4xl m-auto my-5 bg-[#deacsf]  text-[#28104E]">
       <div className="bg-gradient-to-r from-[#29294f] via-[#3a3a6e] to-[#51518d] text-white p-4  rounded-lg shadow-lg flex items-center justify-between sticky top-0 z-10 ">
@@ -70,7 +67,7 @@ export default function AddingNewExpense() {
         >
           <HiArrowLeftCircle />
         </button>
-        <h1 className="text-lg tracking-widest custom-font px-4 py-2 rounded-full bg-gradient-to-r from-[#9b3675] to-[#81346b] shadow-md">
+        <h1 className="capitalize text-lg tracking-widest custom-font px-4 py-2 rounded-full bg-gradient-to-r from-[#9b3675] to-[#81346b] shadow-md">
           {purpose} Expenses
         </h1>
       </div>

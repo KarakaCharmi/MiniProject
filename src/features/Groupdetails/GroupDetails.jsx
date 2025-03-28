@@ -10,6 +10,8 @@ import { useBillContext } from "../../contextapi/BillContextApi";
 import { useEffect } from "react";
 import { useAuth } from "../../contextapi/UserAuth";
 import { useParams } from "react-router-dom";
+import { HiMiniMicrophone } from "react-icons/hi2";
+import PayBillVoice from "../AddingExpense/PayBillVoice";
 
 export default function GroupDetails() {
   const { id } = useParams();
@@ -98,6 +100,17 @@ export default function GroupDetails() {
         </Modal.Open>
         <Modal.Window name="payBill">
           <PayBill />
+        </Modal.Window>
+      </Modal>
+
+      <Modal>
+        <Modal.Open opens="payBillVoice">
+          <button className="fixed left-8 bottom-10 bg-[#6A1E55] text-white px-6 py-3 rounded-full shadow-lg font-bold text-xl hover:shadow-2xl">
+            <HiMiniMicrophone />
+          </button>
+        </Modal.Open>
+        <Modal.Window name="payBillVoice">
+          <PayBillVoice />
         </Modal.Window>
       </Modal>
     </div>
