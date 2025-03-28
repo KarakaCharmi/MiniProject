@@ -129,6 +129,8 @@ export default function GroupMembers() {
                 </div>
                 <span className="font-medium text-gray-800">
                   {member
+                    .split("(")[0] // Extracts only the name part before '('
+                    .trim() // Removes any trailing spaces
                     .split(" ")
                     .map(
                       (word) =>
