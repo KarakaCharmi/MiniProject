@@ -4,9 +4,12 @@ import Modal from "../../ui/Modal";
 import PayBill from "./PayBill";
 import SplitBill from "../SplitBill/SplitBill";
 import { useBillContext } from "../../contextapi/BillContextApi";
-import { useState } from "react";
+// import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useAuth } from "../../contextapi/UserAuth";
+// import { fetchSignInMethodsForEmail } from "firebase/auth";
+// import { useAuth } from "../../contextapi/UserAuth";
 const API_URL = "http://localhost:5000";
 
 export default function AddingNewExpense() {
@@ -15,7 +18,8 @@ export default function AddingNewExpense() {
 
   const navigate = useNavigate();
   const { id } = useParams();
-
+  const { fetchGroups } = useAuth();
+  // console.log("Fetched Group:", group);
   //Event Handler
 
   async function handleSaveTransaction() {
@@ -44,6 +48,7 @@ export default function AddingNewExpense() {
         newTransaction
       );
       toast.success("Expense added successfully!", { autoClose: 1000 });
+      fetchGroups();
       setTimeout(() => {
         navigate(`/explore/groups/${id}`);
       }, 1000);

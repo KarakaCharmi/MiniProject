@@ -19,7 +19,7 @@ export default function Debts() {
 
   const { members, transactions } = groups.find((group) => group._id === id);
   const debts = getDebts({ members, transactions });
-
+  console.log(debts);
   return (
     <div className="bg-[#f5f3ff] p-4 rounded-lg mb-4">
       {" "}
