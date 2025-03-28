@@ -156,7 +156,7 @@ export default function CreateGroup() {
               value={mailInput}
               onChange={(e) => setMailInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="border-2 w-[400px] ml-4 rounded-lg"
+              className="pl-3 border-2 w-[400px] ml-4 rounded-lg"
             />
           </div>
         </div>

@@ -4,13 +4,13 @@ import axios from "axios";
 import { useAuth } from "../../contextapi/UserAuth";
 import Loader from "../../ui/Loader";
 // Function to generate a random light color
-const getRandomLightColor = () => {
-  const hue = Math.floor(Math.random() * 360);
-  return `hsl(${hue}, 80%, 82%)`;
-};
+// const getRandomLightColor = () => {
+//   const hue = Math.floor(Math.random() * 360);
+//   return `hsl(${hue}, 80%, 82%)`;
+// };
 
 export default function Groups({ userEmail }) {
-  const { groups, setGroups } = useAuth();
+  const { groups, setGroups, getRandomLightColor } = useAuth();
   const [loading, setLoading] = useState(true); // ✅ For group loading
   // Effect to track when userEmail is fully available
   useEffect(() => {

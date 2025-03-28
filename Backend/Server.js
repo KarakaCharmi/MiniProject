@@ -110,27 +110,31 @@ app.get("/groups", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 app.get("/groups/:id", async (req, res) => {
   const { id } = req.params;
-  console.log("id", id);
-  const email = req.query.email?.trim();
-
-  if (!email) {
-    console.error("❌ No email provided in request.");
-    return res.status(400).json({ error: "User email is required" });
-  }
-  console.log(`📥 Fetching groups for: ${email}`);
+  console.log("🆔 Group ID:", id);
 
   try {
-    const userGroups = await Group.find({ createdBy: email });
-    const groupRequired = userGroups.find((group) => group._id === id);
+    // Convert `id` to an ObjectId for MongoDB
+    const objectId = new mongoose.Types.ObjectId(id);
+
+    // Find group directly using `_id`
+    const groupRequired = await Group.findOne({ _id: objectId });
+
+    if (!groupRequired) {
+      console.error("⚠️ Group not found.");
+      return res.status(404).json({ error: "Group not found" });
+    }
+
     res.json(groupRequired);
-    console.log("group required", groupRequired);
+    console.log("✅ Group found:", groupRequired);
   } catch (error) {
-    console.error("❌ Error fetching user's groups:", error);
+    console.error("❌ Error fetching group:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 app.put("/groups/:id/members", async (req, res) => {
   const { id } = req.params;
   const { members } = req.body;

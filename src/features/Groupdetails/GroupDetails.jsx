@@ -16,7 +16,7 @@ export default function GroupDetails() {
   const { groups } = useAuth();
   const { setMembers } = useBillContext();
 
-  if (!groups) {
+  if (!groups || groups.length === 0) {
     return <p className="text-center text-gray-600">Loading groups...</p>;
   }
 

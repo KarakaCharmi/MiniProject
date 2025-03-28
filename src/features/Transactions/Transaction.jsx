@@ -9,6 +9,7 @@ export default function Transaction({ item }) {
   const { category, amount, paidBy, date, splitBetween } = item;
   const { currency } = useBillContext();
   const formattedDateTime = format(date, "MMMM dd, yyyy h:mm a");
+
   return (
     <div className="flex items-center justify-between py-4 px-3 shadow-md ">
       <div className="flex items-center">
@@ -18,7 +19,11 @@ export default function Transaction({ item }) {
           </h3>
           <p className="text-gray-500 text-sm">{formattedDateTime}</p>
           <p className="text-gray-500 text-sm">
-            <span className="font-semibold capitalize">{paidBy}</span> paid for
+            <span className="font-semibold capitalize">
+              {/* {paidBy.includes("(") ? paidBy.split("(")[0].trim() : paidBy} */}
+              {paidBy}
+            </span>{" "}
+            paid for
           </p>
         </div>
       </div>
