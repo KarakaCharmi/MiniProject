@@ -3,7 +3,7 @@ import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import { useAuth } from "../contextapi/UserAuth";
 import { useParams } from "react-router-dom";
 import DetailsSheet from "./DetailsSheet";
-import IndividualCharts from "./IndividualCharts";
+import ExpenseCircles from "./ExpenseCircles";
 
 export default function Statistics() {
   const { groups } = useAuth();
@@ -120,9 +120,6 @@ export default function Statistics() {
       </div>
 
       {/* Individual Contributions Chart */}
-      <div className="flex-1 flex flex-col bg-[#2D2D30] shadow-lg rounded-2xl p-6 min-h-[500px] w-full max-w-5xl overflow-y-auto border border-gray-500 mt-6">
-        <IndividualCharts data={individualData} />
-      </div>
     </div>
   );
 }

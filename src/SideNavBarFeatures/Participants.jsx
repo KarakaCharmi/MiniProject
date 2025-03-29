@@ -158,7 +158,7 @@ export default function GroupMembers() {
       <table className="w-full border-collapse rounded-md overflow-hidden shadow-sm">
         <thead>
           <tr className="bg-gray-200 text-gray-700 text-sm uppercase">
-            <th className="p-3 text-left">Name</th>
+            <th className="p-3 pl-6 text-left">Name</th>
             <th className="p-3 text-left">Balance</th>
             <th className="p-3 text-left">Money Paid</th>
             <th className="p-3 text-left">Money Spent</th>
@@ -168,18 +168,48 @@ export default function GroupMembers() {
         <tbody className="divide-y divide-gray-200">
           {members.map((member, index) => (
             <tr key={index} className="hover:bg-gray-50 transition">
-              <td className="p-3 flex items-center space-x-3 capitalize">
-                {member}
+              <td className="p-3 flex items-center space-x-3">
+                <div
+                  className="w-10 h-10 flex items-center justify-center rounded-full text-white font-semibold shadow-sm"
+                  style={{
+                    backgroundColor: `hsl(${
+                      (member.charCodeAt(0) * 15) % 360
+                    }, 70%, 80%)`,
+                    color: "black",
+                  }}
+                >
+                  {member.charAt(0).toUpperCase()}
+                </div>
+                <span className="font-medium text-gray-800">{member}</span>
               </td>
               <td
                 className={`p-3 font-medium relative ${
                   balance[member] < 0 ? "text-red-600" : "text-green-600"
                 }`}
               >
-                {balance[member]}
+                <span
+                  style={{ fontFamily: "IBM Plex Mono, monospace" }}
+                  className={`px-2 py-1 rounded-md ${
+                    balance[member] < 0 ? "bg-red-100" : "bg-green-100"
+                  }`}
+                >
+                  ₹{(balance[member] ?? 0).toFixed(2)}
+                </span>
               </td>
-              <td className="p-3 text-gray-700">{totalSpent[member]}</td>
-              <td className="p-3 text-gray-700">{totalPaid[member]}</td>
+
+              <td
+                className="p-3 text-gray-700"
+                style={{ fontFamily: "IBM Plex Mono, monospace" }}
+              >
+                ₹{(totalPaid[member] ?? 0).toFixed(2)}
+              </td>
+              <td
+                className="p-3 text-gray-700"
+                style={{ fontFamily: "IBM Plex Mono, monospace" }}
+              >
+                ₹{(totalSpent[member] ?? 0).toFixed(2)}
+              </td>
+
               <td className="p-3">
                 <button
                   onClick={() => handleNotifyMember(emails[index], member)}
