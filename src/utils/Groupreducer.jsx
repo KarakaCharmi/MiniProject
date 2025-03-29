@@ -4,6 +4,7 @@ export const initialState = {
   groupName: "",
   groupDescription: "",
   members: [],
+  emails: [],
   currency: "",
   category: "",
   createdBy: "",
@@ -14,19 +15,27 @@ export function groupReducer(state, action) {
     case "SET_FIELD":
       return { ...state, [action.field]: action.value };
     case "ADD_MEMBER":
-      /*  if (
+      return { ...state, members: [...state.members, action.member_name] };
+    case "ADD_EMAIL":
+      if (
         action.email &&
-        !state.members.includes(action.email) &&
+        !state.emails.includes(action.email) &&
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(action.email)
       ) {
-        return { ...state, members: [...state.members, action.email] };
-      } */
+        return { ...state, emails: [...state.emails, action.email] };
+      }
+      return state;
 
-      return { ...state, members: [...state.members, action.email] };
     case "REMOVE_MEMBER":
       return {
         ...state,
-        members: state.members.filter((email) => email !== action.email),
+        members: state.members.filter((email) => email !== action.member_name),
+      };
+
+    case "REMOVE_EMAIL":
+      return {
+        ...state,
+        emails: state.emails.filter((email) => email !== action.email),
       };
     case "RESET":
       return { ...initialState, createdBy: state.createdBy };

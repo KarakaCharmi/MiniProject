@@ -13,7 +13,8 @@ export default function CreateGroup() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [memberInput, setMemberInput] = useState("");
-  const [mailInput, setMailInput] = useState("");
+  const [emailInput, setEmailInput] = useState("");
+
   // ✅ Ensure createdBy is always updated
   const [state, dispatch] = useReducer(groupReducer, {
     ...initialState,
@@ -28,26 +29,25 @@ export default function CreateGroup() {
   }, [user]);
 
   // ✅ Prevent invalid emails
-  const handleKeyDown = (e) => {
+  const handleKeyDownName = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
+      dispatch({
+        type: "ADD_MEMBER",
+        member_name: memberInput.trim().toLowerCase(),
+      });
+      setMemberInput("");
+    }
+  };
 
-      if (memberInput.trim() && mailInput.trim()) {
-        // Combine name and email in the format: Name (Email)
-        const member = `${memberInput.trim()} (${mailInput
-          .trim()
-          .toLowerCase()})`;
-
-        // Dispatch the action with member information
-        dispatch({
-          type: "ADD_MEMBER",
-          email: member,
-        });
-
-        // Clear inputs
-        setMemberInput("");
-        setMailInput("");
-      }
+  const handleKeyDownEmail = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      dispatch({
+        type: "ADD_EMAIL",
+        email: emailInput.trim().toLowerCase(),
+      });
+      setEmailInput("");
     }
   };
 
@@ -65,6 +65,7 @@ export default function CreateGroup() {
       name: state.groupName,
       description: state.groupDescription,
       members: state.members,
+      emails: state.emails,
       currency: state.currency,
       category: state.category,
       createdBy: state.createdBy,
@@ -119,7 +120,34 @@ export default function CreateGroup() {
         />
         <div className="members-container">
           <div className="members-input-wrapper">
-            {state.members.map((email, index) => (
+            {state.members.map((member, index) => (
+              <span key={index} className="member-tag">
+                {member}
+                <button
+                  type="button"
+                  onClick={() =>
+                    dispatch({ type: "REMOVE_MEMBER", member_name: member })
+                  }
+                  className="remove-member-btn"
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+            <input
+              type="text"
+              placeholder="Add Member (Name)"
+              value={memberInput}
+              onChange={(e) => setMemberInput(e.target.value)}
+              onKeyDown={handleKeyDownName}
+              className="input-field member-input"
+            />
+          </div>
+        </div>
+
+        <div className="members-container">
+          <div className="members-input-wrapper">
+            {state.emails.map((email, index) => (
               <span key={index} className="member-tag">
                 {email}
                 <button
@@ -131,32 +159,13 @@ export default function CreateGroup() {
                 </button>
               </span>
             ))}
-          </div>
-          {/* <input
+            <input
               type="text"
-              placeholder="Add Member (Name)"
-              value={memberInput}
-              onChange={(e) => setMemberInput(e.target.value)}
-              onKeyDown={handleKeyDown}
+              placeholder="Add Member (Email)"
+              value={emailInput}
+              onChange={(e) => setEmailInput(e.target.value)}
+              onKeyDown={handleKeyDownEmail}
               className="input-field member-input"
-            /> */}
-          <div className="flex  flex-rows-[auto_1fr ] gap-2 mt-2">
-            <input
-              type="text"
-              placeholder="Name"
-              value={memberInput}
-              onChange={(e) => setMemberInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              className="border-2  p-2 rounded-lg"
-            />
-
-            <input
-              type="email"
-              placeholder="Email"
-              value={mailInput}
-              onChange={(e) => setMailInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              className="pl-3 border-2 w-[400px] ml-4 rounded-lg"
             />
           </div>
         </div>

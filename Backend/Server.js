@@ -2,8 +2,30 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv"; // Load .env variables
+import nodemailer from "nodemailer";
 
 dotenv.config(); // Initialize dotenv
+
+// Configure email transporter (example for Gmail)
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false, // true for 465, false for other ports
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS, // Use App Password if 2FA enabled
+  },
+});
+
+// Verify transporter connection
+transporter.verify((error) => {
+  if (error) {
+    console.error("SMTP Connection Error:", error);
+  } else {
+    console.log("Server is ready to send emails");
+  }
+});
 
 const app = express();
 app.use(express.json());
@@ -30,6 +52,7 @@ const groupSchema = new mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String, default: "" },
   members: { type: [String], default: [] },
+  emails: { type: [String], default: [] },
   currency: { type: String, default: "USD" },
   category: { type: String, default: "General" },
   createdBy: { type: String, required: true },
@@ -52,8 +75,15 @@ app.post("/groups", async (req, res) => {
   try {
     console.log("📥 Received Request Body:", req.body);
 
-    const { name, description, members, currency, category, createdBy } =
-      req.body;
+    const {
+      name,
+      description,
+      members,
+      currency,
+      category,
+      createdBy,
+      emails,
+    } = req.body;
 
     if (!name || !currency || !category || !createdBy) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -63,6 +93,7 @@ app.post("/groups", async (req, res) => {
       name,
       description: description || "",
       members: members || [],
+      emails: emails || [],
       currency,
       category,
       createdBy,
@@ -90,7 +121,8 @@ app.post("/groups", async (req, res) => {
   }
 }); */
 // ✅ API to Fetch All Groups
-app.get("/groups", async (req, res) => {
+
+/* app.get("/groups", async (req, res) => {
   const email = req.query.email?.trim();
 
   if (!email) {
@@ -108,6 +140,26 @@ app.get("/groups", async (req, res) => {
   } catch (error) {
     console.error("❌ Error fetching user's groups:", error);
     res.status(500).json({ error: "Internal server error" });
+  }
+}); */
+
+app.get("/groups", async (req, res) => {
+  try {
+    const { email } = req.query;
+
+    if (!email) {
+      return res
+        .status(400)
+        .json({ message: "Email query parameter is required" });
+    }
+
+    const groups = await Group.find({
+      $or: [{ createdBy: email }, { emails: email }],
+    });
+
+    res.json(groups);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 });
 
@@ -219,6 +271,36 @@ app.post("/groups/:id/transactions", async (req, res) => {
     }
 
     res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.post("/groups/:groupId/notify-member", async (req, res) => {
+  try {
+    const { email, amountOwed } = req.body;
+    const group = await Group.findById(req.params.groupId);
+    console.log("group in server", group);
+    if (!group) {
+      return res.status(404).json({ message: "Group not found" });
+    }
+    console.log(process.env.EMAIL_USER);
+
+    // Send email
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: `Payment Reminder for ${group.name}`,
+      html: `
+        <h2>Payment Reminder</h2>
+        <p>You owe <strong>${amountOwed} ${group.currency}</strong> for the group <strong>${group.name}</strong>.</p>
+        <p>Please settle your debt at your earliest convenience.</p>
+        <p>Group details: ${req.headers.origin}/groups/${group._id}</p>
+      `,
+    });
+    res.json({ message: "Notification sent successfully" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error sending notification", error: error.message });
   }
 });
 
