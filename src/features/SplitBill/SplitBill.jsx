@@ -2,11 +2,9 @@ import { HiArrowDown, HiChevronDown, HiChevronUpDown } from "react-icons/hi2";
 import { useBillContext } from "../../contextapi/BillContextApi";
 import SplitEqually from "./SplitEqually";
 import SplitManually from "./SplitManually";
-import { useState } from "react";
 
-export default function SplitBill() {
+export default function SplitBill({ split, setSplit }) {
   const { members } = useBillContext();
-  const [split, setSplit] = useState("");
 
   return (
     <div className="p-4 flex flex-col divide-y-[2px] divide-purple-200 ">
