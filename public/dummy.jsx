@@ -1,160 +1,179 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useReducer, useState } from "react";
+import "./CreateGroup.css";
 import axios from "axios";
-import ListeningLoader from "../../ui/ListeningLoader";
-import { HiArrowRight } from "react-icons/hi2";
+import { useAuth } from "../contextapi/UserAuth";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { groupReducer, initialState } from "../utils/Groupreducer";
 
-const PayBillVoice = () => {
+const API_URL = "http://localhost:5000";
+
+export default function CreateGroup() {
+  const { user, groups } = useAuth();
   const navigate = useNavigate();
-  const [questions, setQuestions] = useState([
-    "Loading question...",
-    "Loading question...",
-    "Loading question...",
-  ]); // Default placeholders
-  const [answers, setAnswers] = useState(["", "", ""]); // Ensure text areas are visible from the start
-  const [isListening, setIsListening] = useState(false);
-  const [activeListeningIndex, setActiveListeningIndex] = useState(null);
-  const [hasStarted, setHasStarted] = useState(false); // Track if playback started
-  const recognitionRef = useRef(null);
+  const [loading, setLoading] = useState(false);
+  const [memberInput, setMemberInput] = useState("");
 
-  // Fetch questions from the backend
+  // ✅ Ensure createdBy is always updated
+  const [state, dispatch] = useReducer(groupReducer, {
+    ...initialState,
+    groups,
+    createdBy: user?.email || "",
+  });
+
   useEffect(() => {
-    const fetchQuestions = async () => {
-      try {
-        const response = await axios.get("http://localhost:8000/questions");
-        setQuestions(response.data.questions);
-      } catch (error) {
-        console.error("Error fetching questions:", error);
+    if (user?.email) {
+      dispatch({ type: "SET_FIELD", field: "createdBy", value: user.email });
+    }
+  }, [user]);
+
+  // ✅ Prevent invalid emails
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const email = memberInput.trim().toLowerCase();
+      if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        dispatch({ type: "ADD_MEMBER", email });
+        setMemberInput("");
+      } else {
+        toast.error("Invalid email format!", { autoClose: 2000 });
       }
-    };
-
-    fetchQuestions();
-  }, []);
-
-  // Function to play questions and start answering automatically
-  const playQuestions = async () => {
-    setHasStarted(true); // Mark as started
-    for (let i = 0; i < questions.length; i++) {
-      const audio = new Audio(`http://localhost:8000/speak_question/${i}`);
-
-      await audio
-        .play()
-        .catch((error) => console.error("Audio play error:", error));
-
-      // Wait for audio to finish before starting recognition
-      await new Promise((resolve) => {
-        audio.onended = resolve;
-      });
-
-      // Set listening state for the entire 15-second window
-      setActiveListeningIndex(i);
-      setIsListening(true);
-
-      // Start answering automatically
-      startListening(i);
-
-      // Wait 15 seconds before moving to the next question
-      await new Promise((resolve) => setTimeout(resolve, 8000));
-
-      // Reset listening states
-      setIsListening(false);
-      setActiveListeningIndex(null);
     }
   };
 
-  // Function to start speech recognition for a specific question
-  const startListening = (index) => {
-    if (!("webkitSpeechRecognition" in window)) {
-      alert("Speech recognition not supported in this browser.");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    if (!state.createdBy) {
+      toast.error("You must be logged in to create a group.");
+      setLoading(false);
       return;
     }
 
-    const recognition = new window.webkitSpeechRecognition();
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.lang = "en-US";
-
-    recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      setAnswers((prev) => {
-        const updatedAnswers = [...prev];
-        updatedAnswers[index] = transcript; // Update the correct text box
-        return updatedAnswers;
-      });
+    const groupData = {
+      name: state.groupName,
+      description: state.groupDescription,
+      members: state.members,
+      currency: state.currency,
+      category: state.category,
+      createdBy: state.createdBy,
     };
 
-    recognition.onerror = (event) => {
-      console.error("Speech recognition error:", event.error);
-    };
+    try {
+      const response = await axios.post(`${API_URL}/groups`, groupData);
+      toast.success("Group created successfully!", { autoClose: 3000 });
 
-    recognitionRef.current = recognition;
-    recognition.start();
+      setTimeout(() => navigate("/explore/groups"), 1000);
+      dispatch({ type: "RESET" });
+    } catch (error) {
+      toast.error("Error creating group. Please try again.");
+      console.error("API Error:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="bg-slate-50 p-8 rounded-md w-[38rem]">
-      <h2 className="bg-purple-200 py-3 px-4 rounded-md text-center tracking-widest font-semibold flex justify-between">
-        <span>Expense Tracker</span>
-        <button
-          disabled={hasStarted}
-          title="Start Voice Assistant"
-          onClick={playQuestions}
-        >
-          🔊
+    <div className="form-container">
+      <h2 className="form-title">Create New Group</h2>
+      <form onSubmit={handleSubmit} className="form-content">
+        <input
+          type="text"
+          name="groupName"
+          placeholder="Group Name"
+          value={state.groupName}
+          onChange={(e) =>
+            dispatch({
+              type: "SET_FIELD",
+              field: "groupName",
+              value: e.target.value,
+            })
+          }
+          className="input-field"
+          required
+        />
+        <textarea
+          name="groupDescription"
+          placeholder="Group Description"
+          value={state.groupDescription}
+          onChange={(e) =>
+            dispatch({
+              type: "SET_FIELD",
+              field: "groupDescription",
+              value: e.target.value,
+            })
+          }
+          className="input-field"
+          required
+        />
+        <div className="members-container">
+          <div className="members-input-wrapper">
+            {state.members.map((email, index) => (
+              <span key={index} className="member-tag">
+                {email}
+                <button
+                  type="button"
+                  onClick={() => dispatch({ type: "REMOVE_MEMBER", email })}
+                  className="remove-member-btn"
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+            <input
+              type="text"
+              placeholder="Add Member (Email)"
+              value={memberInput}
+              onChange={(e) => setMemberInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              className="input-field member-input"
+            />
+          </div>
+        </div>
+        <div className="currencycont">
+          <select
+            name="currency"
+            value={state.currency}
+            onChange={(e) =>
+              dispatch({
+                type: "SET_FIELD",
+                field: "currency",
+                value: e.target.value,
+              })
+            }
+            className="input-field"
+            required
+          >
+            <option value="">Select Currency</option>
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="INR">INR</option>
+          </select>
+          <select
+            name="category"
+            value={state.category}
+            onChange={(e) =>
+              dispatch({
+                type: "SET_FIELD",
+                field: "category",
+                value: e.target.value,
+              })
+            }
+            className="input-field"
+            required
+          >
+            <option value="">Select Category</option>
+            <option value="Trip">Trip</option>
+            <option value="Office">Office</option>
+            <option value="Temples">Temples</option>
+            <option value="Home">Home</option>
+          </select>
+        </div>
+        <button type="submit" className="submit-btn" disabled={loading}>
+          {loading ? "Creating..." : "Create Group"}
         </button>
-      </h2>
-      {isListening && <ListeningLoader />}
-
-      <div className="mt-6 text-[#28104E]">
-        <div className="flex mb-6 items-center">
-          <div className="basis-[10rem] tracking-widest ">Who Paid ??</div>
-          <input
-            className="border-2 border-solid grow py-1 px-3 tracking-widest outline-1 outline-purple-400 border-purple-300 rounded-lg"
-            value={answers[0]}
-            onChange={(e) => {
-              const newAnswers = [...answers];
-              newAnswers[0] = e.target.value;
-              setAnswers(newAnswers);
-            }}
-          />
-        </div>
-
-        <div className="flex mb-6 items-center">
-          <div className="basis-[10rem] tracking-widest">Amount</div>
-          <input
-            className="border-2 border-solid grow py-1 px-3 tracking-widest outline-1 outline-purple-400 border-purple-300 rounded-lg"
-            value={answers[1]}
-            onChange={(e) => {
-              const newAnswers = [...answers];
-              newAnswers[1] = e.target.value;
-              setAnswers(newAnswers);
-            }}
-          />
-        </div>
-        <div className="flex mb-6 items-center">
-          <div className="basis-[10rem] tracking-widest">Purpose</div>
-          <input
-            className="border-2 border-solid grow py-1 px-3 tracking-widest outline-1 outline-purple-400 border-purple-300 rounded-lg"
-            value={answers[2]}
-            onChange={(e) => {
-              const newAnswers = [...answers];
-              newAnswers[2] = e.target.value;
-              setAnswers(newAnswers);
-            }}
-          />
-        </div>
-      </div>
-
-      <div>
-        <button
-          className="px-4 py-2 rounded-full bg-purple-600 text-white shadow-md tracking-widest font-medium text-md flex gap-3 items-center ml-auto"
-          onClick={() => navigate("newExpense")}
-        >
-          <span>Next</span> <HiArrowRight />
-        </button>
-      </div>
+      </form>
     </div>
   );
-};
-
-export default PayBillVoice;
+}

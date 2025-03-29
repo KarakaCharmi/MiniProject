@@ -2,104 +2,94 @@ import { useParams } from "react-router-dom";
 import { useAuth } from "../contextapi/UserAuth";
 import { useState } from "react";
 import { getDebts } from "../utils/getDebts";
+import { getBalance } from "../utils/getBalance";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 export default function GroupMembers() {
   const { groups, updateGroupMembers } = useAuth();
   const { id } = useParams();
   const group = groups.find((item) => item._id === id) || {};
-  const { members: groupMembers, transactions } = group;
-  /* const balance = 100;
-  const totalPaid = 200; */
+  const { members: groupMembers, transactions, emails } = group;
   const [members, setMembers] = useState(groupMembers || []);
-  const [newMember, setNewMember] = useState("");
-  const [message, setMessage] = useState("");
+
+  const [sendingNotifications, setSendingNotifications] = useState({});
 
   const debts = getDebts({ members: groupMembers, transactions });
-
-  const totalPaid = {};
-  const totalSpent = {};
-
-  members.forEach((member) => {
-    totalPaid[member] = 0;
+  const { totalPaid, totalSpent, balance, EmailBalance } = getBalance({
+    members: groupMembers,
+    transactions,
+    emails,
+    debts,
   });
 
-  transactions.forEach((transaction) => {
-    totalPaid[transaction.paidBy] += transaction.amount;
-  });
-
-  const balance = {};
-
-  groupMembers.forEach((member) => {
-    balance[member] = 0;
-  });
-
-  groupMembers.forEach((from) => {
-    groupMembers.forEach((to) => {
-      balance[from] += debts[to][from];
-      balance[from] -= debts[from][to]; //loan
-    });
-  });
-
-  groupMembers.forEach((member) => {
-    totalSpent[member] = totalPaid[member] - balance[member];
-  });
-
-  function handleChange(e) {
-    setNewMember(e.target.value);
-  }
-
-  async function addMember() {
-    if (!newMember.trim()) {
-      setMessage("Please enter a name.");
-      setMessage("");
-      return;
-    }
-    if (
-      members.some((member) => member.toLowerCase() === newMember.toLowerCase())
-    ) {
-      setMessage("Member already exists");
-
-      setNewMember("");
-      return;
-    }
-
-    const updatedMembers = [...members, newMember];
-
+  // Function to handle sending notification to a specific member
+  const handleNotifyMember = async (memberEmail, member) => {
+    console.log(
+      "membee email,member",
+      memberEmail,
+      member,
+      EmailBalance[memberEmail]
+    );
     try {
-      const response = await fetch(
-        `http://localhost:5000/groups/${id}/members`,
+      setSendingNotifications((prev) => ({ ...prev, [member]: true }));
+
+      const response = await axios.post(
+        `http://localhost:5000/groups/${id}/notify-member`,
         {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ members: updatedMembers }),
+          email: memberEmail,
+          amountOwed: EmailBalance[memberEmail] || 0,
         }
       );
 
-      if (!response.ok) throw new Error("Failed to update members");
-
-      // Update local state
-      setMembers(updatedMembers);
-      setNewMember("");
-      setMessage("");
-
-      // Update global context (VERY IMPORTANT)
-      updateGroupMembers(id, updatedMembers);
-
-      console.log("Member added successfully!");
+      toast.success(`Notification sent to ${member}`);
     } catch (error) {
-      console.error("Error updating members:", error);
-      alert("Failed to add member. Please try again.");
+      toast.error(`Failed to notify ${member}`);
+      console.error("Notification error:", error);
+    } finally {
+      setSendingNotifications((prev) => ({ ...prev, [member]: false }));
     }
-  }
+  };
+
+  // Function to handle sending notification to all members with negative balance
+  const handleNotifyAllDebtors = async () => {
+    try {
+      setSendingNotifications((prev) => ({ ...prev, all: true }));
+
+      const debtors = members.filter((member) => (balance[member] || 0) < 0);
+      if (debtors.length === 0) {
+        toast.info("No members with outstanding debts");
+        return;
+      }
+
+      const response = await axios.post(
+        `http://localhost:5000/groups/${id}/notify-debts`
+      );
+      toast.success(`Notifications sent to ${debtors.length} members`);
+    } catch (error) {
+      toast.error("Failed to send notifications");
+      console.error("Notification error:", error);
+    } finally {
+      setSendingNotifications((prev) => ({ ...prev, all: false }));
+    }
+  };
+
+  // ... keep your existing handleChange and addMember functions ...
 
   return (
     <div className="bg-white mt-2 p-6 rounded-lg shadow-lg max-w-2xl mx-auto border border-gray-200">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-2">
-        Group Members
-      </h2>
-      <p className="text-teal-500  font-sans text-sm mb-4">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-semibold text-gray-800">Group Members</h2>
+        <button
+          onClick={handleNotifyAllDebtors}
+          disabled={sendingNotifications.all}
+          className="bg-blue-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-700 transition font-medium disabled:bg-blue-400"
+        >
+          {sendingNotifications.all ? "Sending..." : "Notify All Debtors"}
+        </button>
+      </div>
+
+      <p className="text-teal-500 font-sans text-sm mb-4">
         Manage members, assign roles, and invite new users
       </p>
 
@@ -110,89 +100,45 @@ export default function GroupMembers() {
             <th className="p-3 text-left">Balance</th>
             <th className="p-3 text-left">Money Paid</th>
             <th className="p-3 text-left">Money Spent</th>
+            <th className="p-3 text-left">Notify</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
           {members.map((member, index) => (
             <tr key={index} className="hover:bg-gray-50 transition">
-              <td className="p-3 flex items-center space-x-3">
-                <div
-                  className="w-10 h-10 flex items-center justify-center rounded-full text-white font-semibold shadow-sm"
-                  style={{
-                    backgroundColor: `hsl(${
-                      (member.charCodeAt(0) * 15) % 360
-                    }, 70%, 80%)`,
-                    color: "black",
-                  }}
-                >
-                  {member.charAt(0).toUpperCase()}
-                </div>
-                <span className="font-medium text-gray-800">
-                  {member
-                    .split("(")[0] // Extracts only the name part before '('
-                    .trim() // Removes any trailing spaces
-                    .split(" ")
-                    .map(
-                      (word) =>
-                        word.charAt(0).toUpperCase() +
-                        word.slice(1).toLowerCase()
-                    )
-                    .join(" ")}
-                </span>
+              <td className="p-3 flex items-center space-x-3 capitalize">
+                {member}
               </td>
               <td
                 className={`p-3 font-medium relative ${
                   balance[member] < 0 ? "text-red-600" : "text-green-600"
                 }`}
               >
-                <span
-                  style={{ fontFamily: "IBM Plex Mono, monospace" }}
-                  className={`px-2 py-1 rounded-md ${
-                    balance[member] < 0 ? "bg-red-100" : "bg-green-100"
+                {balance[member]}
+              </td>
+              <td className="p-3 text-gray-700">{totalSpent[member]}</td>
+              <td className="p-3 text-gray-700">{totalPaid[member]}</td>
+              <td className="p-3">
+                <button
+                  onClick={() => handleNotifyMember(emails[index], member)}
+                  disabled={
+                    sendingNotifications[member] || (balance[member] || 0) >= 0
+                  }
+                  className={`px-3 py-1 rounded-md text-sm ${
+                    (balance[member] || 0) < 0
+                      ? "bg-blue-100 text-blue-800 hover:bg-blue-200"
+                      : "bg-gray-100 text-gray-400 cursor-not-allowed"
                   }`}
                 >
-                  ₹{(balance[member] ?? 0).toFixed(2)}
-                </span>
-              </td>
-              <td
-                className="p-3 text-gray-700 "
-                style={{ fontFamily: "IBM Plex Mono, monospace" }}
-              >
-                ₹{(totalPaid[member] ?? 0).toFixed(2)}
-              </td>
-              <td
-                className="p-3 text-gray-700"
-                style={{ fontFamily: "IBM Plex Mono, monospace" }}
-              >
-                ₹{(totalSpent[member] ?? 0).toFixed(2)}
+                  {sendingNotifications[member] ? "Sending..." : "Notify"}
+                </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      <div className="mt-6 flex items-center gap-3">
-        <input
-          type="text"
-          name="name"
-          value={newMember}
-          onChange={handleChange}
-          placeholder="Enter member name"
-          className="border border-gray-300 p-2 rounded-md w-full shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
-        />
-        <button
-          onClick={addMember}
-          className="bg-green-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-green-700 transition font-medium"
-        >
-          Add
-        </button>
-      </div>
-
-      {message && (
-        <p className="text-red-500 bg-red-100 border border-red-400 rounded-md text-sm mt-3 p-2 text-center">
-          {message}
-        </p>
-      )}
+      {/* Keep your existing add member form */}
     </div>
   );
 }
