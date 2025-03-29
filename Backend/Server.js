@@ -110,7 +110,7 @@ app.post("/groups", async (req, res) => {
 
 //Checking
 
-/* app.get("/groups", async (req, res) => {
+app.get("/groupsInfoo", async (req, res) => {
   try {
     const groups = await Group.find();
     console.log("📤 Sending All Groups");
@@ -119,7 +119,7 @@ app.post("/groups", async (req, res) => {
     console.error("❌ Error fetching groups:", error);
     res.status(500).json({ message: "Error fetching groups", error });
   }
-}); */
+});
 // ✅ API to Fetch All Groups
 
 /* app.get("/groups", async (req, res) => {
@@ -189,7 +189,8 @@ app.get("/groups/:id", async (req, res) => {
 
 app.put("/groups/:id/members", async (req, res) => {
   const { id } = req.params;
-  const { members } = req.body;
+  const { members, emails } = req.body;
+  console.log("Request body", req.body);
 
   try {
     const updatedGroup = await Group.findByIdAndUpdate(
@@ -197,6 +198,7 @@ app.put("/groups/:id/members", async (req, res) => {
       { members },
       { new: true }
     );
+    await Group.findByIdAndUpdate(id, { emails }, { new: true });
     res.json(updatedGroup);
   } catch (error) {
     res.status(500).json({ error: "Failed to update members" });

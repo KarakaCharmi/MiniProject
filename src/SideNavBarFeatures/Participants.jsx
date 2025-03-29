@@ -5,6 +5,7 @@ import { getDebts } from "../utils/getDebts";
 import { getBalance } from "../utils/getBalance";
 import { toast } from "react-toastify";
 import axios from "axios";
+import ExpenseCircles from "./ExpenseCircles";
 
 export default function GroupMembers() {
   const { groups, updateGroupMembers } = useAuth();
@@ -12,6 +13,9 @@ export default function GroupMembers() {
   const group = groups.find((item) => item._id === id) || {};
   const { members: groupMembers, transactions, emails } = group;
   const [members, setMembers] = useState(groupMembers || []);
+  const [newMember, setNewMember] = useState("");
+  const [message, setMessage] = useState("");
+  const [newMemberEmail, setNewMemberEmail] = useState("");
 
   const [sendingNotifications, setSendingNotifications] = useState({});
 
@@ -23,6 +27,64 @@ export default function GroupMembers() {
     debts,
   });
 
+  function handleChange(e) {
+    setNewMember(e.target.value);
+  }
+
+  async function addMember() {
+    if (!newMember.trim() || !newMemberEmail) {
+      setMessage("Please Enter Both the Fields");
+      setMessage("");
+      return;
+    }
+    if (
+      members.some(
+        (member) => member.toLowerCase() === newMember.toLowerCase()
+      ) ||
+      emails.some(
+        (email) => email.toLowerCase() === newMemberEmail.toLowerCase()
+      )
+    ) {
+      setMessage("Either Member or Email already exists");
+      setNewMember("");
+      setNewMemberEmail("");
+      return;
+    }
+
+    const updatedMembers = [...members, newMember];
+    const updatedEmails = [...emails, newMemberEmail];
+
+    try {
+      const response = await fetch(
+        `http://localhost:5000/groups/${id}/members`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            members: updatedMembers,
+            emails: updatedEmails,
+          }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to update members");
+
+      // Update local state
+      setMembers(updatedMembers);
+      setNewMember("");
+      setMessage("");
+
+      // Update global context (VERY IMPORTANT)
+      updateGroupMembers(id, updatedMembers, updatedEmails);
+
+      console.log("Member added successfully!");
+    } catch (error) {
+      console.error("Error updating members:", error);
+      alert("Failed to add member. Please try again.");
+    }
+  }
   // Function to handle sending notification to a specific member
   const handleNotifyMember = async (memberEmail, member) => {
     console.log(
@@ -138,7 +200,36 @@ export default function GroupMembers() {
         </tbody>
       </table>
 
-      {/* Keep your existing add member form */}
+      <div className="mt-6 flex items-center gap-3">
+        <input
+          type="text"
+          name="name"
+          value={newMember}
+          onChange={handleChange}
+          placeholder="Enter member name"
+          className="border border-gray-300 p-2 rounded-md w-full shadow-sm tracking-widest outline-[0.5px] outline-slate-600 text-slate-800"
+        />
+        <input
+          type="text"
+          name="email"
+          value={newMemberEmail}
+          onChange={(e) => setNewMemberEmail(e.target.value)}
+          placeholder="Enter member Email"
+          className="border border-gray-300 p-2 rounded-md w-full shadow-sm tracking-widest outline-[0.5px] outline-slate-600 text-slate-800"
+        />
+        <button
+          onClick={addMember}
+          className="bg-green-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-green-700 transition font-medium tracking-widest"
+        >
+          Add
+        </button>
+      </div>
+
+      {message && (
+        <p className="text-red-500 bg-red-100 border border-red-400 rounded-md text-sm mt-3 p-2 text-center">
+          {message}
+        </p>
+      )}
     </div>
   );
 }
