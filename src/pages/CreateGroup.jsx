@@ -208,7 +208,11 @@ export default function CreateGroup() {
             <option value="Home">Home</option>
           </select>
         </div>
-        <button type="submit" className="submit-btn" disabled={loading}>
+        <button
+          type="submit"
+          className="submit-btn shadow-md px-1 py-2 tracking-widest transition-all duration-300 rounded-full"
+          disabled={loading}
+        >
           {loading ? "Creating..." : "Create Group"}
         </button>
       </form>

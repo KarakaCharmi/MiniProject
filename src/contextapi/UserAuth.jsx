@@ -171,10 +171,12 @@ export function AuthProvider({ children }) {
     navigate("/");
   };
 
-  function updateGroupMembers(groupId, updatedMembers) {
+  function updateGroupMembers(groupId, updatedMembers, updatedEmails) {
     setGroups((prevGroups) =>
       prevGroups.map((group) =>
-        group._id === groupId ? { ...group, members: updatedMembers } : group
+        group._id === groupId
+          ? { ...group, members: updatedMembers, emails: updatedEmails }
+          : group
       )
     );
   }

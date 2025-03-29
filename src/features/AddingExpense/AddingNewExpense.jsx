@@ -8,6 +8,7 @@ import { useBillContext } from "../../contextapi/BillContextApi";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../contextapi/UserAuth";
+import { useState } from "react";
 // import { fetchSignInMethodsForEmail } from "firebase/auth";
 // import { useAuth } from "../../contextapi/UserAuth";
 const API_URL = "http://localhost:5000";
@@ -19,12 +20,20 @@ export default function AddingNewExpense() {
   const navigate = useNavigate();
   const { id } = useParams();
   const { fetchGroups } = useAuth();
+  const [split, setSplit] = useState("");
   // console.log("Fetched Group:", group);
   //Event Handler
 
   async function handleSaveTransaction() {
+    const sumOfMembersBill = membersBill.reduce(
+      (acc, cur) => acc + Number(cur),
+      0
+    );
+    if (split === "unequal" && sumOfMembersBill != amount) {
+      toast.error("User amount splits must be equal to the total amount");
+      return;
+    }
     let eachMemberBill = membersBill.map((memberBill) => Number(memberBill));
-
     let splitBetween = checkedMembers;
 
     if (eachMemberBill.reduce((sum, bill) => sum + bill, 0) !== 0) {
@@ -129,7 +138,7 @@ export default function AddingNewExpense() {
           <div className="text-[#28104E] text-lg tracking-widest font-semibold pl-4  ">
             Split the Expenses
           </div>
-          <SplitBill />
+          <SplitBill split={split} setSplit={setSplit} />
         </div>
         <div className="text-right mb-4 mt-4">
           <button
