@@ -38,7 +38,7 @@ export default function AddingNewExpense() {
       amount: amount,
       paidBy: whoPaid,
       splitBetween,
-      category: purpose,
+      category: purpose.toLowerCase(),
       amountSplits: eachMemberBill,
     };
 

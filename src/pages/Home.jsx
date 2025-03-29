@@ -2,10 +2,11 @@ import Button from "../ui/Button";
 import { Typewriter } from "react-simple-typewriter";
 // import Title from "../components/Navbar";
 import { useState } from "react";
+
 import { Link } from "react-router-dom";
 
 const Home = () => {
-  const [isLogged, setIsLogged] = useState(false);
+  // const [isLogged, setIsLogged] = useState(false);
 
   return (
     <>
