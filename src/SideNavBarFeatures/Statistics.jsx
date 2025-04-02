@@ -3,7 +3,6 @@ import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import { useAuth } from "../contextapi/UserAuth";
 import { useParams } from "react-router-dom";
 import DetailsSheet from "./DetailsSheet";
-import ExpenseCircles from "./ExpenseCircles";
 
 export default function Statistics() {
   const { groups } = useAuth();

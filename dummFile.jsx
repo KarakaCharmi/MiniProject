@@ -1,147 +1,242 @@
-import { useParams } from "react-router-dom";
+import { useEffect, useReducer, useState } from "react";
+import "./CreateGroup.css";
+import axios from "axios";
 import { useAuth } from "../contextapi/UserAuth";
-import { useState } from "react";
-import { getDebts } from "../utils/getDebts";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { groupReducer, initialState } from "../utils/Groupreducer";
 
-export default function GroupMembers() {
-  const { groups, updateGroupMembers } = useAuth();
-  const { id } = useParams();
-  const group = groups.find((item) => item._id === id) || {};
-  const { groupMembers, transactions } = group;
+const API_URL = "http://localhost:5000";
 
-  const [members, setMembers] = useState(groupMembers || []);
-  const [newMember, setNewMember] = useState("");
-  const [message, setMessage] = useState("");
+export default function CreateGroup() {
+  const { user, groups } = useAuth();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [memberInput, setMemberInput] = useState("");
+  const [emailInput, setEmailInput] = useState("");
 
-  //Accesing the debts objects
-
-  const debts = getDebts({ members, transactions });
-  const totalSpents = {};
-  members.forEach((member) => {
-    totalSpents[member] = 0;
+  // ✅ Ensure createdBy is always updated
+  const [state, dispatch] = useReducer(groupReducer, {
+    ...initialState,
+    groups,
+    createdBy: user?.email || "",
   });
 
-  transactions.forEach((transaction) => {
-    totalSpents[transaction.paidBy] += transaction.amount;
-  });
+  useEffect(() => {
+    if (user?.email) {
+      dispatch({ type: "SET_FIELD", field: "createdBy", value: user.email });
+    }
+  }, [user]);
 
-  console.log("TotalSpents:", totalSpents);
+  // ✅ Prevent invalid emails
+  const handleKeyDownName = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      dispatch({
+        type: "ADD_MEMBER",
+        member_name: memberInput.trim().toLowerCase(),
+      });
+      setMemberInput("");
+    }
+  };
 
-  function handleChange(e) {
-    setNewMember(e.target.value);
-  }
+  const handleKeyDownEmail = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      dispatch({
+        type: "ADD_EMAIL",
+        email: emailInput.trim().toLowerCase(),
+      });
+      setEmailInput("");
+    }
+  };
 
-  async function addMember() {
-    if (!newMember.trim()) {
-      setMessage("Please enter a name.");
+  /* function handleAdd(e) {
+    e.preventDefault();
+    if (memberInput && emailInput) {
+      //Adding email
+      dispatch({
+        type: "ADD_EMAIL",
+        email: emailInput.trim().toLowerCase(),
+      });
+      setEmailInput("");
+
+      //Adding memebr name
+      dispatch({
+        type: "ADD_MEMBER",
+        member_name: memberInput.trim().toLowerCase(),
+      });
+      setMemberInput("");
+    } else {
+      toast.error("Enter both name and email fields");
+    }
+  } */
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    if (!state.createdBy) {
+      toast.error("You must be logged in to create a group.");
+      setLoading(false);
       return;
     }
-    if (
-      members.some((member) => member.toLowerCase() === newMember.toLowerCase())
-    ) {
-      setMessage("Member already exists");
-      setNewMember("");
-      return;
-    }
 
-    const updatedMembers = [...members, newMember];
+    const groupData = {
+      name: state.groupName,
+      description: state.groupDescription,
+      members: state.members,
+      emails: state.emails,
+      currency: state.currency,
+      category: state.category,
+      createdBy: state.createdBy,
+    };
 
     try {
-      const response = await fetch(
-        `http://localhost:5000/groups/${id}/members`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ members: updatedMembers }),
-        }
-      );
+      const response = await axios.post(`${API_URL}/groups`, groupData);
+      toast.success("Group created successfully!", { autoClose: 3000 });
 
-      if (!response.ok) throw new Error("Failed to update members");
-
-      // Update local state
-      setMembers(updatedMembers);
-      setNewMember("");
-
-      // Update global context (VERY IMPORTANT)
-      updateGroupMembers(id, updatedMembers);
-
-      console.log("Member added successfully!");
+      setTimeout(() => navigate("/explore/groups"), 1000);
+      dispatch({ type: "RESET" });
     } catch (error) {
-      console.error("Error updating members:", error);
-      alert("Failed to add member. Please try again.");
+      toast.error("Error creating group. Please try again.");
+      console.error("API Error:", error);
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
-      <h2 className="text-xl font-semibold mb-1">Group Members</h2>
-      <p className="text-gray-500 text-sm mb-4">
-        Manage members, assign roles, and invite new users
-      </p>
-      <table className="w-full border-collapse">
-        <thead>
-          <tr className="bg-gray-100 text-gray-600">
-            <th className="p-3 text-left">Name</th>
-
-            <th className="p-3 text-left">Balance</th>
-            <th className="p-3 text-left">Total Paid</th>
-          </tr>
-        </thead>
-        <tbody>
-          {members.map((member, index) => (
-            <tr key={index} className="border-b hover:bg-gray-50 transition">
-              <td className="p-3 flex items-center space-x-3">
-                <div
-                  className="w-10 h-10 flex items-center justify-center rounded-full text-white font-semibold "
-                  style={{
-                    backgroundColor: `hsl(${
-                      (member.charCodeAt(0) * 15) % 360
-                    }, 70%, 80%)`, // Light Color
-                    color: "black", // Dark text for better contrast
-                  }}
-                >
-                  {member.charAt(0).toUpperCase()}
-                </div>
-
-                <div>
-                  <strong>{member}</strong>
-                </div>
-              </td>
-
-              <td
-                className={`p-3 ${
-                  balance < 0 ? "text-red-600" : "text-green-600"
-                }`}
-              >
-                ₹{(balance ?? 0).toFixed(2)}
-              </td>
-              <td className="p-3">₹{(totalPaid ?? 0).toFixed(2)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <div className="mt-4 flex items-center gap-2">
+    <div className="form-container">
+      <h2 className="form-title">Create New Group</h2>
+      <form onSubmit={handleSubmit} className="form-content">
         <input
           type="text"
-          name="name"
-          value={newMember}
-          onChange={handleChange}
-          placeholder="Enter member name"
-          className="border p-2 rounded w-full"
+          name="groupName"
+          placeholder="Group Name"
+          value={state.groupName}
+          onChange={(e) =>
+            dispatch({
+              type: "SET_FIELD",
+              field: "groupName",
+              value: e.target.value,
+            })
+          }
+          className="input-field"
+          required
         />
+        <textarea
+          name="groupDescription"
+          placeholder="Group Description"
+          value={state.groupDescription}
+          onChange={(e) =>
+            dispatch({
+              type: "SET_FIELD",
+              field: "groupDescription",
+              value: e.target.value,
+            })
+          }
+          className="input-field"
+          required
+        />
+        <div className="members-container">
+          <div className="members-input-wrapper">
+            {state.members.map((member, index) => (
+              <span key={index} className="member-tag">
+                {member}
+                <button
+                  type="button"
+                  onClick={() =>
+                    dispatch({ type: "REMOVE_MEMBER", member_name: member })
+                  }
+                  className="remove-member-btn"
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+            <input
+              type="text"
+              placeholder="Add Member (Name)"
+              value={memberInput}
+              onChange={(e) => setMemberInput(e.target.value)}
+              onKeyDown={handleKeyDownName}
+              className="input-field member-input"
+            />
+          </div>
+        </div>
+
+        <div className="members-container">
+          <div className="members-input-wrapper">
+            {state.emails.map((email, index) => (
+              <span key={index} className="member-tag">
+                {email}
+                <button
+                  type="button"
+                  onClick={() => dispatch({ type: "REMOVE_MEMBER", email })}
+                  className="remove-member-btn"
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+            <input
+              type="text"
+              placeholder="Add Member (Email)"
+              value={emailInput}
+              onChange={(e) => setEmailInput(e.target.value)}
+              onKeyDown={handleKeyDownEmail}
+              className="input-field member-input"
+            />
+          </div>
+        </div>
+        <div className="currencycont">
+          <select
+            name="currency"
+            value={state.currency}
+            onChange={(e) =>
+              dispatch({
+                type: "SET_FIELD",
+                field: "currency",
+                value: e.target.value,
+              })
+            }
+            className="input-field"
+            required
+          >
+            <option value="">Select Currency</option>
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="INR">INR</option>
+          </select>
+          <select
+            name="category"
+            value={state.category}
+            onChange={(e) =>
+              dispatch({
+                type: "SET_FIELD",
+                field: "category",
+                value: e.target.value,
+              })
+            }
+            className="input-field"
+            required
+          >
+            <option value="">Select Category</option>
+            <option value="Trip">Trip</option>
+            <option value="Office">Office</option>
+            <option value="Temples">Temples</option>
+            <option value="Home">Home</option>
+          </select>
+        </div>
         <button
-          onClick={addMember}
-          className="bg-green-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-green-700"
+          type="submit"
+          className="submit-btn shadow-md px-1 py-2 tracking-widest transition-all duration-300 rounded-full"
+          disabled={loading}
         >
-          Add
+          {loading ? "Creating..." : "Create Group"}
         </button>
-      </div>
-      <p className="text-red-400 bg-red-500 bg-opacity-5 text-sm mt-2">
-        {message}
-      </p>
+      </form>
     </div>
   );
 }

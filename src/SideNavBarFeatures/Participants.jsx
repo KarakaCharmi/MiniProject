@@ -5,7 +5,6 @@ import { getDebts } from "../utils/getDebts";
 import { getBalance } from "../utils/getBalance";
 import { toast } from "react-toastify";
 import axios from "axios";
-import ExpenseCircles from "./ExpenseCircles";
 
 export default function GroupMembers() {
   const { groups, updateGroupMembers } = useAuth();

@@ -48,6 +48,7 @@ export default function Transaction({ item }) {
                 style={{ backgroundColor: getRandomLightColor() }}
                 className=" text-white rounded-full h-8 w-8 flex items-center justify-center text-sm relative ml-[-8px] font-semibold"
                 key={index}
+                title={friend}
               >
                 {friend[0].toUpperCase()}
               </div>
