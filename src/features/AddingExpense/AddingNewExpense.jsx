@@ -25,6 +25,7 @@ export default function AddingNewExpense() {
   //Event Handler
 
   async function handleSaveTransaction() {
+    let eachMemberBill;
     const sumOfMembersBill = membersBill.reduce(
       (acc, cur) => acc + Number(cur),
       0
@@ -33,7 +34,8 @@ export default function AddingNewExpense() {
       toast.error("User amount splits must be equal to the total amount");
       return;
     }
-    let eachMemberBill = membersBill.map((memberBill) => Number(memberBill));
+
+    eachMemberBill = membersBill.map((memberBill) => Number(memberBill));
     let splitBetween = checkedMembers;
 
     if (eachMemberBill.reduce((sum, bill) => sum + bill, 0) !== 0) {

@@ -51,6 +51,27 @@ export default function CreateGroup() {
     }
   };
 
+  function handleAdd(e) {
+    e.preventDefault();
+    if (memberInput && emailInput) {
+      //Adding email
+      dispatch({
+        type: "ADD_EMAIL",
+        email: emailInput.trim().toLowerCase(),
+      });
+      setEmailInput("");
+
+      //Adding memebr name
+      dispatch({
+        type: "ADD_MEMBER",
+        member_name: memberInput.trim().toLowerCase(),
+      });
+      setMemberInput("");
+    } else {
+      toast.error("Enter both name and email fields");
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -86,7 +107,7 @@ export default function CreateGroup() {
   };
 
   return (
-    <div className="form-container">
+    <div className="form-container tracking-widest text-slate-600">
       <h2 className="form-title">Create New Group</h2>
       <form onSubmit={handleSubmit} className="form-content">
         <input
@@ -118,34 +139,53 @@ export default function CreateGroup() {
           className="input-field"
           required
         />
-        <div className="members-container">
-          <div className="members-input-wrapper">
+        <div className="members-container flex flex-col gap-5">
+          <div className="members-input-wrapper ">
             {state.members.map((member, index) => (
               <span key={index} className="member-tag">
-                {member}
+                {`${member} : ${state.emails[index]}`}
                 <button
                   type="button"
-                  onClick={() =>
-                    dispatch({ type: "REMOVE_MEMBER", member_name: member })
-                  }
+                  onClick={() => {
+                    dispatch({ type: "REMOVE_MEMBER", member_name: member });
+                    dispatch({
+                      type: "REMOVE_MEMBER",
+                      email: state.emails[index],
+                    });
+                  }}
                   className="remove-member-btn"
                 >
                   ×
                 </button>
               </span>
             ))}
+          </div>
+          <div className="flex flex-row mr-auto gap-6 w-full">
             <input
               type="text"
               placeholder="Add Member (Name)"
               value={memberInput}
               onChange={(e) => setMemberInput(e.target.value)}
-              onKeyDown={handleKeyDownName}
-              className="input-field member-input"
+              className="border-b-[1.3px] border-slate-400 grow outline-none tracking-widest"
             />
+            <input
+              type="text"
+              placeholder="Add Member (Email)"
+              value={emailInput}
+              onChange={(e) => setEmailInput(e.target.value)}
+              className="border-b-[1.3px] border-slate-400 grow outline-none tracking-widest"
+            />
+
+            <button
+              onClick={(e) => handleAdd(e)}
+              className="border text-white bg-blue-500  font-semibold shadow-md tracking-widest px-2 py-1 rounded-md "
+            >
+              ADD
+            </button>
           </div>
         </div>
 
-        <div className="members-container">
+        {/* <div className="members-container">
           <div className="members-input-wrapper">
             {state.emails.map((email, index) => (
               <span key={index} className="member-tag">
@@ -167,8 +207,8 @@ export default function CreateGroup() {
               onKeyDown={handleKeyDownEmail}
               className="input-field member-input"
             />
-          </div>
-        </div>
+          </div> 
+        </div>*/}
         <div className="currencycont">
           <select
             name="currency"
