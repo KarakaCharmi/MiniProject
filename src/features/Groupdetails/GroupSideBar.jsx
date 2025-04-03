@@ -79,8 +79,8 @@ const GroupSideBar = () => {
 
         {/* Right Content Area (Scrollable) */}
         <div
-          className="flex-1 ml-[70px] pt-0 mt-2 bg-[#fff] rounded-lg shadow-2xl  
-                     max-h-screen overflow-y-auto border-2 border-[#2E3A50] text-[#A1B3CC] p-6"
+          className="flex-1 ml-[70px] pt-0 mt-2 bg-[#fff] rounded-lg  
+                     min-h-screen overflow-y-auto shadow-2xl border-2 border-[#2E3A50] border-t-2 "
         >
           <Outlet />
         </div>

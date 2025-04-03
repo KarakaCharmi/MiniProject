@@ -26,7 +26,7 @@ const Chatbot = ({ isOpen, onClose }) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/get_travel_info",
+        "http://localhost:9000/get_travel_info",
         {
           user_query: input,
         }
