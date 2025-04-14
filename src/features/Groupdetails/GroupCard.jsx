@@ -16,6 +16,7 @@ const Abbrev = ["Trip", "Office", "Family", "Team"];
 export default function GroupCard({ group }) {
   const [style, setStyle] = useState({ backgroundColor: "" });
   const { user, groups, deleteGroup } = useAuth(); // ✅ Combined useAuth call
+  const totalAmountSpent = group.transactions.reduce((total, transaction) => total + transaction.amount, 0);
 
   useEffect(() => {
     setStyle({ backgroundColor: getRandomLightColor() });
@@ -47,10 +48,21 @@ export default function GroupCard({ group }) {
         </div>
         <div className="group-body">
           <div className="status">
-            <span className="status-badge settled">Settled</span>
-            <span className="status-badge owed">
-              You are owed: ₹ {group.amountOwed || 0}
-            </span>
+          <span className="status-badge owed">
+  Total Trip Cost: ₹ {totalAmountSpent}
+</span>
+          <span className='status-badge settled'>
+  Created on:{" "}
+  {new Date(group.createdOn).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  })}
+</span>
+
+
+           
+
           </div>
           <div className="category">
             <span className="category-label">Category</span>

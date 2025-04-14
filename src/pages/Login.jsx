@@ -52,7 +52,7 @@ const Login = () => {
                 isActive ? "left-1/2 delay-[0.6s]" : ""
               }`}
               style={{
-                backgroundImage: `url(/ignup-rafiki.png)`,
+                backgroundImage: `url(/Signup-rafiki.png)`,
                 backgroundPosition: "center",
                 backgroundSize: "cover",
                 backgroundRepeat: "no-repeat",

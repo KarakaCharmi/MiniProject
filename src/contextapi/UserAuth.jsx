@@ -180,7 +180,32 @@ export function AuthProvider({ children }) {
       )
     );
   }
+// New function to update group name and description
+const updateGroupNameAndDescription = async (groupId, newName, newDescription) => {
+  try {
+    // Call the backend to update the group
+    const response = await axios.patch(`http://localhost:5000/groups/${groupId}`, {
+      name: newName,
+      description: newDescription,
+    });
 
+    if (response.status === 200) {
+      // Update the local state with the updated group data
+      setGroups((prevGroups) =>
+        prevGroups.map((group) =>
+          group._id === groupId
+            ? { ...group, name: newName, description: newDescription }
+            : group
+        )
+      );
+      console.log("Group updated successfully:", response.data);
+    } else {
+      throw new Error("Failed to update group");
+    }
+  } catch (error) {
+    console.error("❌ Error updating group:", error.message);
+  }
+};
   return (
     <AuthContext.Provider
       value={{
@@ -197,6 +222,7 @@ export function AuthProvider({ children }) {
         loadingAuth,
         updateGroupMembers,
         fetchGroups,
+        updateGroupNameAndDescription,
         getRandomLightColor,
         getRandomDarkColor, // ✅ Expose fetchGroups
       }}

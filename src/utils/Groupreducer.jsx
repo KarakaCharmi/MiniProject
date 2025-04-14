@@ -8,6 +8,7 @@ export const initialState = {
   currency: "",
   category: "",
   createdBy: "",
+  
 };
 // const { groups } = useAuth();
 export function groupReducer(state, action) {

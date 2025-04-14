@@ -1,5 +1,6 @@
 .group-card {
-  width: 400px;
+  min-width:400px;
+  width: auto;
   border-radius: 12px;
   overflow: hidden;
   background: white;
@@ -31,6 +32,8 @@
 .group-description {
   font-size: 0.9rem;
   color: #4b5563;
+  font-weight:bold;
+  font-family:Georgia, 'Times New Roman', Times, serif;
 }
 
 .edit-icon {
@@ -70,8 +73,8 @@
 }
 
 .settled {
-  background: #d1fae5;
-  color: #065f46;
+  background: #d3d3d3; /* Light grey */
+  color: #333333; /* Dark grey */
 }
 
 .owed {
@@ -88,6 +91,7 @@
 .category-label {
   font-size: 0.9rem;
   color: #374151;
+  font-weight:bolder;
 }
 
 .category-badge {

@@ -90,6 +90,7 @@ export default function CreateGroup() {
       currency: state.currency,
       category: state.category,
       createdBy: state.createdBy,
+      
     };
 
     try {
@@ -246,6 +247,7 @@ export default function CreateGroup() {
             <option value="Office">Office</option>
             <option value="Temples">Temples</option>
             <option value="Home">Home</option>
+            <option value="Home">Others</option>
           </select>
         </div>
         <button
