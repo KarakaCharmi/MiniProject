@@ -17,6 +17,7 @@ import AppLayout from "./AppLayout";
 import GroupSideBar from "./features/Groupdetails/GroupSideBar";
 import Participants from "./SideNavBarFeatures/Participants";
 import Statistics from "./SideNavBarFeatures/Statistics";
+import Overviewpage from "./SideNavBarFeatures/Overviewpage"
 function App() {
   const { user } = useAuth();
   return (
@@ -41,6 +42,7 @@ function App() {
           <Route path="participants" element={<Participants />} />
           <Route path="statistics" element={<Statistics />} />
           <Route path="newExpense" element={<AddingNewExpense />} />
+          <Route path="overview" element={<Overviewpage />} />
           <Route index path="*" element={<GroupCardInfo />} />
         </Route>
         <Route path="about" element={<About />} />

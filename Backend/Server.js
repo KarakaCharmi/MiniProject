@@ -5,6 +5,15 @@ import dotenv from "dotenv"; // Load .env variables
 import nodemailer from "nodemailer";
 
 dotenv.config(); // Initialize dotenv
+const app = express();
+app.use(express.json());
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Allow only your frontend
+    methods: ["GET", "POST", "PUT", "DELETE",'PATCH'],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 // Configure email transporter (example for Gmail)
 const transporter = nodemailer.createTransport({
@@ -27,15 +36,6 @@ transporter.verify((error) => {
   }
 });
 
-const app = express();
-app.use(express.json());
-app.use(
-  cors({
-    origin: "http://localhost:5173", // Allow only your frontend
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
 
 // MongoDB Connection
 const MONGO_URL = process.env.MONGO_URI || "mongodb://localhost:27017/groupDB";
@@ -56,6 +56,7 @@ const groupSchema = new mongoose.Schema({
   currency: { type: String, default: "USD" },
   category: { type: String, default: "General" },
   createdBy: { type: String, required: true },
+  createdOn: { type: Date, required: true, default: Date.now },
   transactions: [
     {
       amount: { type: Number, required: true, min: 0 },
@@ -83,6 +84,7 @@ app.post("/groups", async (req, res) => {
       category,
       createdBy,
       emails,
+      
     } = req.body;
 
     if (!name || !currency || !category || !createdBy) {
@@ -97,6 +99,8 @@ app.post("/groups", async (req, res) => {
       currency,
       category,
       createdBy,
+      
+
     });
 
     const savedGroup = await newGroup.save();
@@ -305,6 +309,28 @@ app.post("/groups/:groupId/notify-member", async (req, res) => {
       .json({ message: "Error sending notification", error: error.message });
   }
 });
+app.patch("/groups/:id", async (req, res) => {
+  const groupId = req.params.id;
+  const { name, description } = req.body;
+
+  try {
+    const updatedGroup = await Group.findByIdAndUpdate(
+      groupId,
+      { name, description },
+      { new: true }
+    );
+
+    if (!updatedGroup) {
+      return res.status(404).json({ error: "Group not found" });
+    }
+
+    res.json(updatedGroup);
+  } catch (err) {
+    console.error("❌ Error updating group:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 
 // Start Server
 const PORT = process.env.PORT || 5000;
