@@ -22,7 +22,7 @@ export default function RecentActivity() {
   recents.reverse();
   return (
     <div className="bg-[#deacsf] p-4 rounded-lg shadow-md">
-      <h2 className="text-[#28104E] font-semibold capitalize tracking-wider mb-4 text-xl flex gap-4">
+      <h2 className="text-[#28104E] font-semibold capitalize tracking-widest mb-4 text-xl flex gap-4">
         <HiOutlineArrowTrendingUp />
         Recent activity
       </h2>

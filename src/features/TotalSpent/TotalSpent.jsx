@@ -18,14 +18,14 @@ export default function TotalSpent() {
     return acc + current.amount;
   }, 0);
   return (
-    <div className="bg-[#deacsf] p-4 rounded-lg shadow-md mb-4 text-[#28014E]">
+    <div className="bg-[#deacsf] p-4 rounded-lg shadow-md mb-4 text-[#28014E] tracking-widest">
       <h2 className=" mb-4 font-semibold tracking-wider text-2xl flex gap-4">
         <HiOutlineBanknotes />
         Total spent
       </h2>
       <div className="flex items-center justify-between">
         <div className="flex items-center">
-          <div className="bg-[#282828] opacity-[90%] text-white rounded-full h-10 w-10 flex items-center justify-center">
+          <div className="bg-gradient-to-r from-[#9b3675] to-[#81346b] text-white rounded-full h-10 w-10 flex items-center justify-center">
             <i className="fas fa-dollar-sign"></i>
           </div>
           <div className="ml-4">

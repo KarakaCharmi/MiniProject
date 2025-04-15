@@ -17,7 +17,7 @@ export default function Transaction({ item }) {
     <div className="flex items-center justify-between py-4 px-3 shadow-md text-lg tracking-wide">
       <div className="flex items-center">
         <div className="ml-4">
-          <h3 className="font-semibold text-[#28014E] tracking-wider capitalize mb-2 text-xl">
+          <h3 className="font-semibold text-[#28014E] tracking-wider capitalize mb-2 text-lg">
             {category}
           </h3>
           <p className="text-gray-500 text-sm tracking-widest">

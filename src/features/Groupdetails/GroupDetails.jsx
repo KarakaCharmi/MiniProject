@@ -48,7 +48,7 @@ export default function GroupDetails() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto my-2 ">
+    <div className="max-w-[90%] mx-auto my-2 ">
       {/* Header */}
       <div className="bg-gradient-to-r from-[#29294f] via-[#3a3a6e] to-[#51518d] text-white p-6 rounded-lg shadow-lg flex justify-between items-center "> <div className="flex items-center gap-4">
           <div className="bg-white border-zinc-600 border-2 p-2 rounded-full shadow-md">
@@ -60,8 +60,8 @@ export default function GroupDetails() {
           </div>
 
           <div>
-            <h1 className="text-3xl font-bold text-[#eb5f76]/80">{name}</h1>
-            <p className="text-lg italic font-[cursive] font-bold text-[#090a0a]">
+            <h1 className="text-3xl font-bold text-white tracking-wider">{name}</h1>
+            <p className="text-lg italic font-[cursive] text-white tracking-wider">
               &mdash; {description}
             </p>
           </div>

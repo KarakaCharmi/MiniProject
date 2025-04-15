@@ -41,7 +41,7 @@ export default function Debts() {
                   onClick={() => handleClick(from)}
                 >
                   <div className="mx-4 my-4 text-[#28104E] tracking-wide relative">
-                    <span className="capitalize text-lg tracking-wide font-medium ">
+                    <span className="capitalize text-md tracking-wide font-bold">
                       {from}&apos;s Debts
                     </span>
                     <div

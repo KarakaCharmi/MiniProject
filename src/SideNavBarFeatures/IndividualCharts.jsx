@@ -50,7 +50,7 @@ export default function IndividualCharts({ individualData = [] }) {
         <h2 className="text-3xl font-bold text-gray-100 mb-4 text-center">Individual Expense Analysis</h2>
        
       </div>
-      <div style={{ height: 400, width: "80%", maxWidth: "600px", overflowX: "auto" }}>
+      <div style={{ height: 400, width: "80%", minWidth: "600px", overflowX: "auto" }}>
       <ResponsiveBar
           data={individualData}
           keys={categories}
