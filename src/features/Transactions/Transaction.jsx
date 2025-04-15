@@ -1,8 +1,11 @@
 import { format } from "date-fns";
 import { useBillContext } from "../../contextapi/BillContextApi";
-const getRandomLightColor = () => {
-  const hue = Math.floor(Math.random() * 360);
-  return `hsl(${hue}, 72%, 76%)`;
+const getRandomDarkCoolColor = () => {
+  // Hue ranges for blue (200-260), purple (261-300), magenta (301-360)
+  const hue = Math.floor(Math.random() * 161) + 200; // 200-360 range
+  const saturation = Math.floor(Math.random() * 30) + 70; // 70-100% saturation
+  const lightness = Math.floor(Math.random() * 15) + 20; // 20-35% lightness (dark)
+  return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 };
 export default function Transaction({ item }) {
   //Destructing the item
@@ -11,14 +14,16 @@ export default function Transaction({ item }) {
   const formattedDateTime = format(date, "MMMM dd, yyyy h:mm a");
 
   return (
-    <div className="flex items-center justify-between py-4 px-3 shadow-md ">
+    <div className="flex items-center justify-between py-4 px-3 shadow-md text-lg tracking-wide">
       <div className="flex items-center">
         <div className="ml-4">
-          <h3 className="font-semibold text-[#28014E] tracking-wider capitalize">
+          <h3 className="font-semibold text-[#28014E] tracking-wider capitalize mb-2 text-xl">
             {category}
           </h3>
-          <p className="text-gray-500 text-sm">{formattedDateTime}</p>
-          <p className="text-gray-500 text-sm">
+          <p className="text-gray-500 text-sm tracking-widest">
+            {formattedDateTime}
+          </p>
+          <p className="text-gray-500 text-sm tracking-widest">
             <span className="font-semibold capitalize">
               {/* {paidBy.includes("(") ? paidBy.split("(")[0].trim() : paidBy} */}
               {paidBy}
@@ -45,7 +50,7 @@ export default function Transaction({ item }) {
             .filter((friend) => friend !== paidBy)
             .map((friend, index) => (
               <div
-                style={{ backgroundColor: getRandomLightColor() }}
+                style={{ backgroundColor: getRandomDarkCoolColor() }}
                 className=" text-white rounded-full h-8 w-8 flex items-center justify-center text-sm relative ml-[-8px] font-semibold"
                 key={index}
                 title={friend}

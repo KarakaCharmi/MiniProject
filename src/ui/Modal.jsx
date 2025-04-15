@@ -4,7 +4,7 @@ import { HiXMark } from "react-icons/hi2";
 import styled from "styled-components";
 import { useState } from "react";
 import useOutsideClick from "../hooks/useOutsideClick";
-const ModalContext = createContext();
+export const ModalContext = createContext();
 function Modal({ children }) {
   const [openName, setOpenName] = useState("");
   const close = () => {

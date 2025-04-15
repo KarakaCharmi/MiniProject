@@ -1,5 +1,10 @@
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../contextapi/UserAuth";
+import {
+  HiArrowTrendingUp,
+  HiOutlineArrowTrendingUp,
+  HiOutlineBanknotes,
+} from "react-icons/hi2";
 
 export default function TotalSpent() {
   const { groups } = useAuth();
@@ -14,7 +19,8 @@ export default function TotalSpent() {
   }, 0);
   return (
     <div className="bg-[#deacsf] p-4 rounded-lg shadow-md mb-4 text-[#28014E]">
-      <h2 className=" mb-2 font-semibold tracking-wider text-lg">
+      <h2 className=" mb-4 font-semibold tracking-wider text-2xl flex gap-4">
+        <HiOutlineBanknotes />
         Total spent
       </h2>
       <div className="flex items-center justify-between">

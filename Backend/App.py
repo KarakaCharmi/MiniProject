@@ -6,7 +6,7 @@ app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend access
 
 # Configure Google Gemini AI
-genai.configure(api_key="AIzaSyBLN1UJ2Wy2lEKcX8YIoVTS5nYqguKJCGM")
+genai.configure(api_key="AIzaSyCtCCJctN1byDFF4b8BgtLJ3aL1tjMR0JQ")
 model = genai.GenerativeModel("gemini-2.0-pro-exp")
 
 SYSTEM_INSTRUCTION = (

@@ -24,7 +24,7 @@ export default function Debts() {
     <div className="bg-[#f5f3ff] p-4 rounded-lg mb-4">
       {" "}
       {/* Fixed bg color */}
-      <h2 className="text-[#28104E] mb-2 font-semibold tracking-widest flex items-center gap-2">
+      <h2 className="text-[#28104E] mb-4 font-semibold tracking-widest flex items-center gap-4 text-2xl">
         <HiScale />
         Debts
       </h2>
@@ -41,7 +41,7 @@ export default function Debts() {
                   onClick={() => handleClick(from)}
                 >
                   <div className="mx-4 my-4 text-[#28104E] tracking-wide relative">
-                    <span className="capitalize text-md tracking-wide font-medium">
+                    <span className="capitalize text-lg tracking-wide font-medium ">
                       {from}&apos;s Debts
                     </span>
                     <div

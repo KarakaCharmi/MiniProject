@@ -92,6 +92,12 @@ const PayBillVoice = () => {
     recognitionRef.current = recognition;
     recognition.start();
   };
+  function handleNext() {
+    setPurpose(answers[2]);
+    whoPaidBill(answers[0]);
+    totalAmount(answers[1]);
+    navigate("newExpense");
+  }
 
   return (
     <div className="bg-slate-50 p-8 rounded-md w-[38rem]">
@@ -117,7 +123,6 @@ const PayBillVoice = () => {
               const newAnswers = [...answers];
               newAnswers[0] = e.target.value;
               setAnswers(newAnswers);
-              whoPaidBill(e.target.value);
               setIsListening(true);
             }}
           />
@@ -132,7 +137,6 @@ const PayBillVoice = () => {
               const newAnswers = [...answers];
               newAnswers[1] = e.target.value;
               setAnswers(newAnswers);
-              totalAmount(Number(e.target.value));
               setIsListening(false);
             }}
           />
@@ -146,7 +150,6 @@ const PayBillVoice = () => {
               const newAnswers = [...answers];
               newAnswers[2] = e.target.value;
               setAnswers(newAnswers);
-              setPurpose(e.target.value);
               setIsListening(false);
             }}
           />
@@ -156,7 +159,7 @@ const PayBillVoice = () => {
       <div>
         <button
           className="px-4 py-2 rounded-full bg-purple-600 text-white shadow-md tracking-widest font-medium text-md flex gap-3 items-center ml-auto"
-          onClick={() => navigate("newExpense")}
+          onClick={handleNext}
         >
           <span>Next</span> <HiArrowRight />
         </button>
