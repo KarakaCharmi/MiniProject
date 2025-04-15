@@ -16,7 +16,7 @@ const API_URL = "http://localhost:5000";
 export default function AddingNewExpense() {
   const { amount, whoPaid, checkedMembers, membersBill, purpose } =
     useBillContext();
-
+  console.log("in add expense", amount, whoPaid, purpose);
   const navigate = useNavigate();
   const { id } = useParams();
   const { fetchGroups } = useAuth();
@@ -70,7 +70,7 @@ export default function AddingNewExpense() {
   }
 
   return (
-    <div className="min-h-screen  max-w-4xl m-auto my-5 bg-[#deacsf]  text-[#28104E]">
+    <div className="min-h-screen  max-w-[90%] m-auto my-5 bg-[#deacsf]  text-[#28104E]">
       <div className="bg-gradient-to-r from-[#29294f] via-[#3a3a6e] to-[#51518d] text-white p-4  rounded-lg shadow-lg flex items-center justify-between sticky top-0 z-10 ">
         <button
           onClick={() => navigate(`/explore/groups/${id}`)}
@@ -132,7 +132,7 @@ export default function AddingNewExpense() {
               </button>
             </Modal.Open>
             <Modal.Window name="editPaid">
-              <PayBill />
+              <PayBill opens="editExpense" />
             </Modal.Window>
           </Modal>
         </div>

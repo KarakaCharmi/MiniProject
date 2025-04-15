@@ -7,7 +7,9 @@ import useReceipt from "./Receipt";
 import { set } from "mongoose";
 import Receipt from "./Receipt";
 import { HiArrowRight } from "react-icons/hi2";
-function Content() {
+import { useContext } from "react";
+import { ModalContext } from "../../ui/Modal";
+function Content({ opens }) {
   const {
     amount,
     purpose,
@@ -21,12 +23,14 @@ function Content() {
     receiptLoading,
   } = useBillContext();
   const navigate = useNavigate();
+  const { close } = useContext(ModalContext);
   //const { isLoading, totalAmount: receiptAmount } = useReceipt();
   //Eventhandlers
 
   function handleClick() {
     //totalAmount(receiptAmount);
-    navigate("newExpense");
+    if (opens === "addExpense") navigate("newExpense");
+    else if (opens === "editExpense") close();
   }
   return (
     <div className="rounded-xl relative mt-2">

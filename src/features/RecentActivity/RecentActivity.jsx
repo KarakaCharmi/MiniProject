@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../contextapi/UserAuth";
 import Recent from "./Recent";
+import { HiOutlineArrowTrendingUp } from "react-icons/hi2";
 
 export default function RecentActivity() {
   const { groups } = useAuth();
@@ -21,7 +22,8 @@ export default function RecentActivity() {
   recents.reverse();
   return (
     <div className="bg-[#deacsf] p-4 rounded-lg shadow-md">
-      <h2 className="text-[#28104E] font-semibold capitalize tracking-wider mb-4">
+      <h2 className="text-[#28104E] font-semibold capitalize tracking-wider mb-4 text-xl flex gap-4">
+        <HiOutlineArrowTrendingUp />
         Recent activity
       </h2>
       {recents.map((recent) => (

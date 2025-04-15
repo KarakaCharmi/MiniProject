@@ -48,9 +48,11 @@ export default function GroupDetails() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto my-2">
+    <div className="max-w-[90%] mx-auto my-2 ">
       {/* Header */}
-      <div className="bg-[#9A7DCE] backdrop-blur-3xl bg-opacity-70 text-white p-6 rounded-lg shadow-lg flex justify-between items-center sticky top-0 z-50">
+     
+     <div className="bg-[#9A7DCE] backdrop-blur-3xl bg-opacity-70 text-white p-6 rounded-lg shadow-lg flex justify-between items-center sticky top-0 z-50">
+
         <div className="flex items-center gap-4">
           <div className="bg-white border-zinc-600 border-2 p-2 rounded-full shadow-md">
             <img
@@ -61,6 +63,7 @@ export default function GroupDetails() {
           </div>
 
           <div>
+
             <h1 className="text-3xl font-bold text-[#eb5f76]/80">{name}</h1>
             <p className="text-lg italic font-[cursive] font-bold text-[#090a0a]">
               &mdash; {description}
@@ -95,6 +98,7 @@ export default function GroupDetails() {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md animate-fadeIn">
           <div className="bg-gradient-to-br from-[#1f2937] to-[#111827] text-white p-8 rounded-2xl w-full max-w-xl mx-4 shadow-2xl relative scale-95 animate-scaleIn">
+
             <button
               className="absolute top-4 right-4 text-red-500 hover:text-red-600 transition-transform hover:scale-125"
               onClick={() => setIsModalOpen(false)}
@@ -103,9 +107,11 @@ export default function GroupDetails() {
               <FiX className="text-3xl" />
             </button>
 
+
             <h3 className="text-3xl font-bold mb-6 text-center text-cyan-400 tracking-wide">
               ✨ Edit Group Info
             </h3>
+
 
             <div className="space-y-6">
               <input
@@ -148,6 +154,7 @@ export default function GroupDetails() {
       )}
 
       {/* Add Expense Buttons */}
+
       {isOpen && (
         <>
           {/* Voice Command Button */}
@@ -197,6 +204,7 @@ export default function GroupDetails() {
 >
   {isOpen ? "×" : "+"}
 </button>
+
 
     </div>
   );
