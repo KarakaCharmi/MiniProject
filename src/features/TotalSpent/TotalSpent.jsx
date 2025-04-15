@@ -25,7 +25,7 @@ export default function TotalSpent() {
       </h2>
       <div className="flex items-center justify-between">
         <div className="flex items-center">
-          <div className="bg-gradient-to-r from-[#9b3675] to-[#81346b] text-white rounded-full h-10 w-10 flex items-center justify-center">
+          <div className="bg-[#282828] opacity-[90%] text-white rounded-full h-10 w-10 flex items-center justify-center">
             <i className="fas fa-dollar-sign"></i>
           </div>
           <div className="ml-4">

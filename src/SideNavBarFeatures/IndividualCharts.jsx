@@ -1,5 +1,6 @@
 import { ResponsiveBar } from "@nivo/bar";
 import { useTheme } from "next-themes";
+import { Trophy, LayoutGrid, TrendingUp } from "lucide-react";
 
 export default function IndividualCharts({ individualData = [] }) {
   console.log("🚀 Received Individual Data:", individualData);
@@ -43,8 +44,8 @@ export default function IndividualCharts({ individualData = [] }) {
   const gridLineColor = isDarkMode ? '#475569' : '#cbd5e1'; // Visible but not distracting
 
   return (
-    <div className="flex  gap-10">
-     <div className="mt-2 rounded-lg  gap-10 items-center justify-center w-full  bg-white dark:bg-slate-900 shadow-xl border border-slate-200 dark:border-slate-800 p-4">
+    <div className="flex gap-10">
+     <div className="mt-2 rounded-lg  gap-1 items-center justify-center  bg-white dark:bg-slate-900 shadow-xl border border-slate-200 dark:border-slate-800 p-4">
       <div className="flex flex-col w-full mb-3">
         <h2 className="text-3xl font-bold text-gray-100 mb-4 text-center">Individual Expense Analysis</h2>
        
@@ -190,51 +191,70 @@ export default function IndividualCharts({ individualData = [] }) {
           </div> 
       
       {/* Add a nice statistics strip below the chart */}
-      <div className='mt-2 rounded-lg flex flex gap-10 items-center justify-center w-full  bg-white dark:bg-slate-900 shadow-xl border border-slate-200 dark:border-slate-800 p-4'>
-        
-      <div className="w-full mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-        {individualData.length > 0 && (
-          <>
-            <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-4 shadow-md">
-              <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400">Highest Spender</h3>
-              <div className="mt-2 flex items-center">
-                <div className="text-xl font-bold text-slate-800 dark:text-slate-200">
-                  {individualData.sort((a, b) => {
-                    const aSum = Object.entries(a).reduce((sum, [key, val]) => key !== 'name' ? sum + val : sum, 0);
-                    const bSum = Object.entries(b).reduce((sum, [key, val]) => key !== 'name' ? sum + val : sum, 0);
-                    return bSum - aSum;
-                  })[0]?.name || 'N/A'}
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-4 shadow-md">
-              <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400">Total Categories</h3>
-              <div className="mt-2 flex items-center">
-                <div className="text-xl font-bold text-slate-800 dark:text-slate-200">
-                  {categories.length}
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-4 shadow-md">
-              <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400">Top Category</h3>
-              <div className="mt-2 flex items-center">
-                <div className="text-xl font-bold text-slate-800 dark:text-slate-200">
-                  {(() => {
-                    const categoryTotals = categories.map(cat => ({
-                      category: cat,
-                      sum: individualData.reduce((sum, person) => sum + (person[cat] || 0), 0)
-                    }));
-                    return categoryTotals.sort((a, b) => b.sum - a.sum)[0]?.category || 'N/A';
-                  })()}
-                </div>
-              </div>
-            </div>
-          </>
-        )}
+      
+<div className='mt-6 rounded-lg w-full bg-white dark:bg-slate-900 shadow-xl border border-slate-200 dark:border-slate-800 p-6'>
+  {individualData.length > 0 && (
+    <div className="flex flex-col gap-6">
+      
+      {/* Highest Spender */}
+      <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-800 rounded-lg px-6 py-4 shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded-full">
+            <Trophy className="text-blue-600 dark:text-blue-300" size={24} />
+          </div>
+          <h3 className="text-md font-semibold text-slate-600 dark:text-slate-300">
+            Highest Spender
+          </h3>
+        </div>
+        <div className="text-lg font-bold text-slate-800 dark:text-slate-100">
+          {individualData.sort((a, b) => {
+            const aSum = Object.entries(a).reduce((sum, [key, val]) => key !== 'name' ? sum + val : sum, 0);
+            const bSum = Object.entries(b).reduce((sum, [key, val]) => key !== 'name' ? sum + val : sum, 0);
+            return bSum - aSum;
+          })[0]?.name.toUpperCase() || 'N/A'}
         </div>
       </div>
+
+      {/* Total Categories */}
+      <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-800 rounded-lg px-6 py-4 shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="bg-green-100 dark:bg-green-900 p-2 rounded-full">
+            <LayoutGrid className="text-green-600 dark:text-green-300" size={24} />
+          </div>
+          <h3 className="text-md font-semibold text-slate-600 dark:text-slate-300">
+            Total Categories
+          </h3>
+        </div>
+        <div className="text-lg font-bold text-slate-800 dark:text-slate-100">
+          {categories.length}
+        </div>
+      </div>
+
+      {/* Top Category */}
+      <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-800 rounded-lg px-6 py-4 shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="bg-purple-100 dark:bg-purple-900 p-2 rounded-full">
+            <TrendingUp className="text-purple-600 dark:text-purple-300" size={24} />
+          </div>
+          <h3 className="text-md font-semibold text-slate-600 dark:text-slate-300">
+            Top Category
+          </h3>
+        </div>
+        <div className="text-lg font-bold text-slate-800 dark:text-slate-100">
+          {(() => {
+            const categoryTotals = categories.map(cat => ({
+              category: cat,
+              sum: individualData.reduce((sum, person) => sum + (person[cat] || 0), 0)
+            }));
+            return categoryTotals.sort((a, b) => b.sum - a.sum)[0]?.category || 'N/A';
+          })()}
+        </div>
+      </div>
+      
+    </div>
+  )}
+</div>
+
     </div>
   );
 }
