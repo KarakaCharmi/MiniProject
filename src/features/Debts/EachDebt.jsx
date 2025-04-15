@@ -15,7 +15,7 @@ export default function EachDebt({ from, to, amount }) {
         {/* Column 3: To and Amount */}
         <div className="text-right">
           <div className="capitalize">{to}</div>
-          <div className=" text-sm">{amount}</div>
+          <div className=" text-sm">{amount.toFixed(2)}</div>
         </div>
       </div>
     </div>

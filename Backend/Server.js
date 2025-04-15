@@ -56,7 +56,7 @@ const groupSchema = new mongoose.Schema({
   currency: { type: String, default: "USD" },
   category: { type: String, default: "General" },
   createdBy: { type: String, required: true },
-  createdOn: { type: Date, required: true, default: Date.now },
+  createdOn: { type: Date, required: true, default: Date.now, immutable: true },
   transactions: [
     {
       amount: { type: Number, required: true, min: 0 },
@@ -99,7 +99,7 @@ app.post("/groups", async (req, res) => {
       currency,
       category,
       createdBy,
-      
+      createdOn:new Date(),
 
     });
 

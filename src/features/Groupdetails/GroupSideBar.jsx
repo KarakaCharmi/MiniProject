@@ -7,7 +7,7 @@ const GroupSideBar = () => {
     "bg-[#A1B3CC] bg-opacity-20 text-stone-100 font-extrabold  text-[#4C8BF5] shadow-md";
   const style2 = "text-[#A1B3CC] hover:text-[#4C8BF5] hover:bg-[#25334D]";
   return (
-    <div className="h-screen bg-[#121826] flex flex-col">
+    <div className=" h-screen bg-[#121826] flex flex-col">
       {/* Fixed Navbar at the Top */}
       <div className="bg-white">
         <Navbar />
@@ -80,7 +80,7 @@ const GroupSideBar = () => {
         {/* Right Content Area (Scrollable) */}
         <div
           className="flex-1 ml-[70px] pt-0 mt-2 bg-[#fff] rounded-lg  
-                     min-h-screen overflow-y-auto shadow-2xl border-2 border-[#2E3A50] border-t-2 "
+                     max-h-screen overflow-y-auto shadow-2xl border-2 border-[#2E3A50] border-t-2 "
         >
           <Outlet />
         </div>

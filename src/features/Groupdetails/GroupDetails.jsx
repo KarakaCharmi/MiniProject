@@ -12,15 +12,17 @@ import { useAuth } from "../../contextapi/UserAuth";
 import { useParams } from "react-router-dom";
 import { HiMiniMicrophone } from "react-icons/hi2";
 import PayBillVoice from "../AddingExpense/PayBillVoice";
-
+import { FaPlus } from "react-icons/fa6";
 export default function GroupDetails() {
   const { id } = useParams();
   const { groups, updateGroupNameAndDescription } = useAuth();
   const { setMembers } = useBillContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
+  const toggleMenu = () => setIsOpen(!isOpen);
   if (!groups || groups.length === 0) {
-    return <p className="text-center  text-gray-600">Loading groups...</p>;
+    return <p className="text-center text-gray-600">Loading groups...</p>;
   }
 
   const group = groups.find((item) => item._id === id) || {};
@@ -48,7 +50,9 @@ export default function GroupDetails() {
   return (
     <div className="max-w-[90%] mx-auto my-2 ">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#29294f] via-[#3a3a6e] to-[#51518d] text-white p-6 rounded-lg shadow-lg flex justify-between items-center ">
+     
+     <div className="bg-[#9A7DCE] backdrop-blur-3xl bg-opacity-70 text-white p-6 rounded-lg shadow-lg flex justify-between items-center sticky top-0 z-50">
+
         <div className="flex items-center gap-4">
           <div className="bg-white border-zinc-600 border-2 p-2 rounded-full shadow-md">
             <img
@@ -59,8 +63,9 @@ export default function GroupDetails() {
           </div>
 
           <div>
-            <h1 className="text-3xl font-bold tracking-wider">{name}</h1>
-            <p className="text-lg italic font-[cursive] text-white">
+
+            <h1 className="text-3xl font-bold text-[#eb5f76]/80">{name}</h1>
+            <p className="text-lg italic font-[cursive] font-bold text-[#090a0a]">
               &mdash; {description}
             </p>
           </div>
@@ -93,7 +98,7 @@ export default function GroupDetails() {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md animate-fadeIn">
           <div className="bg-gradient-to-br from-[#1f2937] to-[#111827] text-white p-8 rounded-2xl w-full max-w-xl mx-4 shadow-2xl relative scale-95 animate-scaleIn">
-            {/* Close Button */}
+
             <button
               className="absolute top-4 right-4 text-red-500 hover:text-red-600 transition-transform hover:scale-125"
               onClick={() => setIsModalOpen(false)}
@@ -102,12 +107,12 @@ export default function GroupDetails() {
               <FiX className="text-3xl" />
             </button>
 
-            {/* Header */}
+
             <h3 className="text-3xl font-bold mb-6 text-center text-cyan-400 tracking-wide">
               ✨ Edit Group Info
             </h3>
 
-            {/* Form */}
+
             <div className="space-y-6">
               <input
                 type="text"
@@ -140,7 +145,7 @@ export default function GroupDetails() {
           No transactions yet...!
         </div>
       ) : (
-        <div className="p-6 mt-4 bg-gray-100 rounded-lg shadow-md">
+        <div className="p-6 mt-4 bg-gray-100 rounded-lg shadow-md ">
           <Transactions transactions={transactions} />
           <Debts transactions={transactions} />
           <TotalSpent transactions={transactions} />
@@ -149,27 +154,58 @@ export default function GroupDetails() {
       )}
 
       {/* Add Expense Buttons */}
-      <Modal>
-        <Modal.Open opens="payBill">
-          <button className="fixed right-8 bottom-10 bg-[#6A1E55] text-white px-6 py-3 rounded-full shadow-lg font-bold text-xl hover:shadow-2xl">
-            +
-          </button>
-        </Modal.Open>
-        <Modal.Window name="payBill">
-          <PayBill opens="addExpense" />
-        </Modal.Window>
-      </Modal>
 
-      <Modal>
-        <Modal.Open opens="payBillVoice">
-          <button className="fixed left-8 bottom-10 bg-[#6A1E55] text-white px-6 py-3 rounded-full shadow-lg font-bold text-xl hover:shadow-2xl">
-            <HiMiniMicrophone />
-          </button>
-        </Modal.Open>
-        <Modal.Window name="payBillVoice">
-          <PayBillVoice />
-        </Modal.Window>
-      </Modal>
+      {isOpen && (
+        <>
+          {/* Voice Command Button */}
+          <Modal>
+            <Modal.Open opens="payBillVoice">
+              <div className="group">
+                <button className="fixed right-8 bottom-32 bg-gradient-to-r from-purple-500 to-pink-500 text-white p-5 rounded-full shadow-xl hover:scale-105 transition-transform z-20">
+                  <HiMiniMicrophone className="text-2xl" />
+                </button>
+                <span className="fixed right-20 bottom-36 bg-gray-800 text-white text-sm px-3 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  Add Voice Command
+                </span>
+              </div>
+            </Modal.Open>
+            <Modal.Window name="payBillVoice">
+              <PayBillVoice />
+            </Modal.Window>
+          </Modal>
+
+          {/* Add Expense Button */}
+          <Modal>
+            <Modal.Open opens="payBill">
+              <div className="group">
+                <button className="fixed right-8 bottom-52 bg-gradient-to-r from-pink-600 to-red-500 text-white p-5 rounded-full shadow-xl hover:scale-105 transition-transform z-20">
+                  <FaPlus className="text-2xl" />
+                </button>
+                <span className="fixed right-20 bottom-56 bg-gray-800 text-white text-sm px-3 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  Add Expense
+                </span>
+              </div>
+            </Modal.Open>
+            <Modal.Window name="payBill">
+              <PayBill />
+            </Modal.Window>
+          </Modal>
+        </>
+      )}
+
+      {/* Main Toggle Button */}
+      <button
+  onClick={toggleMenu}
+  className={`fixed right-8 bottom-10 ${
+    isOpen
+      ? "bg-amber-500 text-white"
+      : "bg-gradient-to-r from-cyan-500 to-blue-600 text-white"
+  } p-4 px-6 rounded-full shadow-lg font-bold text-4xl hover:scale-110 transition-transform z-30`}
+>
+  {isOpen ? "×" : "+"}
+</button>
+
+
     </div>
   );
 }
