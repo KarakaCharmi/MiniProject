@@ -137,7 +137,7 @@ export default function Statistics() {
               </div>
             </div>
           ) : (
-            <div className="flex w-max-5xl mx-auto  justify-center">
+            <div className="flex w-full mx-auto  justify-center">
               <IndividualCharts individualData={individualData} />
             </div>
           )}
