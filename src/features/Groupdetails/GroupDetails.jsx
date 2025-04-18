@@ -50,7 +50,9 @@ export default function GroupDetails() {
   return (
     <div className="max-w-[90%] mx-auto my-2 ">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#29294f] via-[#3a3a6e] to-[#51518d] text-white p-6 rounded-lg shadow-lg flex justify-between items-center "> <div className="flex items-center gap-4">
+      <div className="bg-gradient-to-r from-[#29294f] via-[#3a3a6e] to-[#51518d] text-white p-6 rounded-lg shadow-lg flex justify-between items-center ">
+        {" "}
+        <div className="flex items-center gap-4">
           <div className="bg-white border-zinc-600 border-2 p-2 rounded-full shadow-md">
             <img
               src="https://img.icons8.com/?size=100&id=40730&format=png&color=000000"
@@ -60,13 +62,14 @@ export default function GroupDetails() {
           </div>
 
           <div>
-            <h1 className="text-3xl font-bold text-white tracking-wider">{name}</h1>
+            <h1 className="text-3xl font-bold text-white tracking-wider">
+              {name}
+            </h1>
             <p className="text-lg italic font-[cursive] text-white tracking-wider">
               &mdash; {description}
             </p>
           </div>
         </div>
-
         <div className="flex items-center gap-3">
           <div className="px-5 py-2 bg-white/10 backdrop-blur-md text-white font-bold text-lg rounded-full shadow-lg flex items-center gap-2 border border-white/20">
             <IoMdPeople className="text-xl text-white" />
@@ -82,10 +85,6 @@ export default function GroupDetails() {
             }}
           >
             <FiEdit className="text-lg" />
-          </button>
-
-          <button className="bg-[#FFFFFF1A] px-4 py-2 rounded-full shadow-md hover:bg-[#FFFFFF33] transition">
-            <FiShare2 className="text-lg" />
           </button>
         </div>
       </div>
@@ -170,7 +169,7 @@ export default function GroupDetails() {
               <PayBill />
             </Modal.Window>
           </Modal> */}
-<Modal>
+          <Modal>
             <Modal.Open opens="payBillVoice">
               <div className="group">
                 <button className="fixed right-8 bottom-32 bg-gradient-to-r from-purple-500 to-pink-500 text-white p-5 rounded-full shadow-xl hover:scale-105 transition-transform z-20">
@@ -199,23 +198,22 @@ export default function GroupDetails() {
               </div>
             </Modal.Open>
             <Modal.Window name="payBill">
-              <PayBill opens='addExpense'/>
+              <PayBill opens="addExpense" />
             </Modal.Window>
           </Modal>
         </>
       )}
 
-<button
-  onClick={toggleMenu}
-  className={`fixed right-8 bottom-10 ${
-    isOpen
-      ? "bg-amber-500 text-white"
-      : "bg-gradient-to-r from-cyan-500 to-blue-600 text-white"
-  } p-4 px-6 rounded-full shadow-lg font-bold text-4xl hover:scale-110 transition-transform z-30`}
->
-  {isOpen ? "×" : "+"}
-</button>
-
+      <button
+        onClick={toggleMenu}
+        className={`fixed right-8 bottom-10 ${
+          isOpen
+            ? "bg-amber-500 text-white"
+            : "bg-gradient-to-r from-cyan-500 to-blue-600 text-white"
+        } p-4 px-6 rounded-full shadow-lg font-bold text-4xl hover:scale-110 transition-transform z-30`}
+      >
+        {isOpen ? "×" : "+"}
+      </button>
     </div>
   );
 }

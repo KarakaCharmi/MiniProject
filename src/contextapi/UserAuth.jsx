@@ -35,7 +35,6 @@ export function AuthProvider({ children }) {
   // ✅ Fetch Groups Function
   const fetchGroups = async () => {
     if (!user || !user.email) return; // Ensure user exists
-
     try {
       setLoading(true); // ✅ Start loading
       console.log(`📡 Fetching groups for: ${user.email}`);
@@ -118,13 +117,11 @@ export function AuthProvider({ children }) {
       );
       await updateProfile(userCredential.user, { displayName: name });
       await userCredential.user.reload();
-
       setUser({
         uid: userCredential.user.uid,
         name,
         email: userCredential.user.email,
       });
-
       setLoggedIn(true);
       fetchGroups(); // ✅ Fetch groups after signup
       return userCredential.user;
@@ -133,7 +130,6 @@ export function AuthProvider({ children }) {
       throw error;
     }
   };
-
   // ✅ Login function
   const login = async (email, password) => {
     try {
@@ -151,7 +147,6 @@ export function AuthProvider({ children }) {
         await updateProfile(user, { displayName: name });
         await user.reload();
       }
-
       setUser({ uid: user.uid, name, email: user.email });
       setLoggedIn(true);
       fetchGroups(); // ✅ Fetch groups after login
@@ -180,32 +175,39 @@ export function AuthProvider({ children }) {
       )
     );
   }
-// New function to update group name and description
-const updateGroupNameAndDescription = async (groupId, newName, newDescription) => {
-  try {
-    // Call the backend to update the group
-    const response = await axios.patch(`http://localhost:5000/groups/${groupId}`, {
-      name: newName,
-      description: newDescription,
-    });
-
-    if (response.status === 200) {
-      // Update the local state with the updated group data
-      setGroups((prevGroups) =>
-        prevGroups.map((group) =>
-          group._id === groupId
-            ? { ...group, name: newName, description: newDescription }
-            : group
-        )
+  // New function to update group name and description
+  const updateGroupNameAndDescription = async (
+    groupId,
+    newName,
+    newDescription
+  ) => {
+    try {
+      // Call the backend to update the group
+      const response = await axios.patch(
+        `http://localhost:5000/groups/${groupId}`,
+        {
+          name: newName,
+          description: newDescription,
+        }
       );
-      console.log("Group updated successfully:", response.data);
-    } else {
-      throw new Error("Failed to update group");
+
+      if (response.status === 200) {
+        // Update the local state with the updated group data
+        setGroups((prevGroups) =>
+          prevGroups.map((group) =>
+            group._id === groupId
+              ? { ...group, name: newName, description: newDescription }
+              : group
+          )
+        );
+        console.log("Group updated successfully:", response.data);
+      } else {
+        throw new Error("Failed to update group");
+      }
+    } catch (error) {
+      console.error("❌ Error updating group:", error.message);
     }
-  } catch (error) {
-    console.error("❌ Error updating group:", error.message);
-  }
-};
+  };
   return (
     <AuthContext.Provider
       value={{

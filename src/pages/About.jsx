@@ -18,12 +18,12 @@ const teamMembers = [
   {
     name: "Devi",
     role: "UI/UX Designer",
-    img: "/devi.jpg",
+    img: "/image.png",
   },
   {
-    name: "Charlie",
+    name: "Parvathi",
     role: "ML Engineer",
-    img: "https://via.placeholder.com/150",
+    img: "/Parvathi.png",
   },
 ];
 

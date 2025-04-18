@@ -15,7 +15,10 @@ const Title = () => {
 
   return (
     <div className="bg-gray-300/40 text-stone-950 flex flex-row items-center justify-between px-4 py-3 rounded-b-full">
-      <h1 className="ml-10 text-3xl font-serif">Slice It</h1>
+      <h1 className="ml-10 text-3xl font-serif">
+        <span className="font-extrabold">T</span>ravel
+        <span className="font-extrabold">T</span>ally
+      </h1>
       <div className="flex flex-row items-center gap-4 mr-5">
         <NavLink to="/" end className={getLinkStyle}>
           Home
